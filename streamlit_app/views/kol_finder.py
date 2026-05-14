@@ -16,23 +16,16 @@ import streamlit as st
 from utils.charts import scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, section_heading
 
-st.set_page_config(
-    page_title=f"{APP_NAME} | KOL Finder",
-    page_icon=PAGE_ICON,
-    layout="wide",
-)
 apply_global_styles()
 
 hero(
     title="KOL Finder",
     subtitle=(
-        "Identify the top Key Opinion Leaders (highest-volume Part D "
-        "prescribers) for a given therapeutic class, with their pharma "
-        "payment relationships overlaid."
+        "Highest-volume Part D prescribers in any therapeutic class, with "
+        "their pharma payment relationships overlaid."
     ),
-    meta="Backed by analyses/01_kol_identification.sql",
 )
 
 

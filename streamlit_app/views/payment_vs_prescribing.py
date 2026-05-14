@@ -16,23 +16,16 @@ import streamlit as st
 from utils.charts import bar_chart, scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, section_heading
 
-st.set_page_config(
-    page_title=f"{APP_NAME} | Payment vs. Prescribing",
-    page_icon=PAGE_ICON,
-    layout="wide",
-)
 apply_global_styles()
 
 hero(
     title="Payment vs. Prescribing",
     subtitle=(
-        "Do physicians who receive payments from a pharma company prescribe "
-        "more of that company's drugs? A published research question "
-        "(JAMA Internal Medicine, 2016), reproducible here on 2022 CMS data."
+        "Do paid physicians prescribe more of a company's drugs? "
+        "The published research question, controlled for specialty."
     ),
-    meta="Backed by analyses/02_payment_prescribing_correlation.sql",
 )
 
 st.info(

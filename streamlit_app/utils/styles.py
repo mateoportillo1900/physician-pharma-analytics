@@ -48,27 +48,29 @@ html, body, [class*="css"] {
 /* Bigger, tighter headings */
 h1 {
     font-weight: 800 !important;
-    font-size: 2.25rem !important;
-    line-height: 1.15 !important;
+    font-size: 1.9rem !important;
+    line-height: 1.1 !important;
     letter-spacing: -0.025em !important;
     color: #0F172A !important;
-    margin-bottom: 0.4rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.35rem !important;
+    padding-top: 0 !important;
 }
 
 h2 {
     font-weight: 700 !important;
-    font-size: 1.5rem !important;
+    font-size: 1.35rem !important;
     letter-spacing: -0.015em !important;
     color: #1E293B !important;
-    margin-top: 2rem !important;
-    margin-bottom: 0.75rem !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
 }
 
 h3 {
     font-weight: 600 !important;
-    font-size: 1.125rem !important;
+    font-size: 1.1rem !important;
     color: #334155 !important;
-    margin-top: 1.5rem !important;
+    margin-top: 1rem !important;
 }
 
 /* ── Hide Streamlit chrome ───────────────────────────────────────────────── */
@@ -78,11 +80,11 @@ header[data-testid="stHeader"] { background: transparent; height: 0; }
 .stDeployButton { display: none; }
 div[data-testid="stToolbar"] { display: none; }
 
-/* ── Layout — wider main content ─────────────────────────────────────────── */
+/* ── Layout — wider main content, tight top padding ─────────────────────── */
 .main .block-container {
     max-width: 1280px;
-    padding-top: 2.5rem;
-    padding-bottom: 4rem;
+    padding-top: 1.25rem;
+    padding-bottom: 3rem;
     padding-left: 2.5rem;
     padding-right: 2.5rem;
 }
@@ -146,38 +148,38 @@ div[data-testid="stMetric"] div[data-testid="stMetricDelta"] {
 
 /* ── Hero / sub-headline below page title ────────────────────────────────── */
 .app-hero-sub {
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: #475569;
-    line-height: 1.55;
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    margin-top: 0.15rem;
+    margin-bottom: 1.25rem;
     max-width: 760px;
 }
 .app-hero-meta {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #94A3B8;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 /* ── Section heading badge ───────────────────────────────────────────────── */
 .section-heading {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    font-size: 0.78rem;
+    gap: 0.55rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #1E3A8A;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-top: 2rem;
-    margin-bottom: 0.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 .section-heading::before {
     content: "";
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     background: #F59E0B;
     border-radius: 50%;
 }

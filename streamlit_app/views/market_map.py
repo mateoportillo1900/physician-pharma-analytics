@@ -16,22 +16,16 @@ import streamlit as st
 from utils.charts import choropleth_us
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, section_heading
 
-st.set_page_config(
-    page_title=f"{APP_NAME} | Market Opportunity Map",
-    page_icon=PAGE_ICON,
-    layout="wide",
-)
 apply_global_styles()
 
 hero(
     title="Market Opportunity Map",
     subtitle=(
-        "Where is pharma over- or under-invested relative to Part D "
-        "prescribing volume? Identify growth markets and saturation risks."
+        "Where is pharma over- or under-invested vs. actual Part D "
+        "prescribing volume? Spot growth markets and saturation risks."
     ),
-    meta="Backed by analyses/04_geographic_market_analysis.sql",
 )
 
 st.info(

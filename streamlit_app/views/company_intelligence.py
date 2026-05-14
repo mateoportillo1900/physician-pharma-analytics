@@ -17,20 +17,15 @@ import streamlit as st
 from utils.charts import bar_chart, choropleth_us, donut_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, section_heading
 
-st.set_page_config(
-    page_title=f"{APP_NAME} | Company Intelligence",
-    page_icon=PAGE_ICON,
-    layout="wide",
-)
 apply_global_styles()
 
 hero(
     title="Company Intelligence",
     subtitle=(
-        "Deep dive into a pharmaceutical company's 2022 commercial "
-        "footprint — where they invested, with whom, and on what."
+        "A single manufacturer's 2022 commercial footprint — specialty "
+        "mix, payment types, geography, and top paid physicians."
     ),
 )
 
