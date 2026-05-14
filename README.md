@@ -21,19 +21,116 @@ Six views: Executive Dashboard, KOL Finder, Company Intelligence,
 Payment vs. Prescribing, Market Opportunity Map, and About this project.
 Every chart has an LLM-powered "Explain This Chart" button.
 
-## 📐 Visual Documentation
+## How it's built — at a glance
 
-How everything fits together, with Mermaid diagrams (rendered inline on
-GitHub):
+Five clearly bounded layers. The **dbt mart** is the contract between
+the data team and the application team; the Streamlit app does not
+know — and does not need to know — that raw CMS CSVs ever existed.
 
-- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — System
-  architecture, data pipeline, dbt model lineage, user-interaction
-  sequence, and LLM "Explain This Chart" flow.
-- **[docs/DATA_MODEL.md](./docs/DATA_MODEL.md)** — Star-schema ER
-  diagram, table reference, the headline analytical join, data
-  quality, and privacy design.
-- **[METHODOLOGY.md](./METHODOLOGY.md)** — Analytical decisions,
-  statistical formulas, limitations, the BMS reporting quirk.
+```mermaid
+flowchart TB
+    subgraph SRC["1 · Data Sources"]
+        OP["CMS Open Payments<br/>(2022)"]
+        PD["CMS Medicare Part D PUF<br/>(2022)"]
+    end
+
+    subgraph STORAGE["2 · Storage  (Neon Postgres)"]
+        RAW["raw schema<br/>(filtered: top 10 mfrs,<br/>≥ $50 payments)"]
+        STG["raw_staging  (views)"]
+        INT["raw_intermediate  (views)"]
+        MART["raw_mart<br/>★ star schema:<br/>3 dims + 3 facts"]
+    end
+
+    subgraph TRANSFORM["3 · Transformation  (dbt)"]
+        DBT["12 models<br/>59 passing tests"]
+    end
+
+    subgraph APP["4 · Application  (Streamlit)"]
+        APPPY["app.py · st.navigation hub"]
+        VIEWS["6 views<br/>(Dashboard, KOL Finder,<br/>Company Intel, Payment-Rx,<br/>Market Map, About)"]
+    end
+
+    subgraph AI["5 · AI Augmentation"]
+        BTN["Explain this chart"]
+        GROQ["Groq · Llama 3.3 70B"]
+    end
+
+    OP -->|"download + load"| RAW
+    PD -->|"download + load"| RAW
+    DBT -.->|"builds"| STG
+    DBT -.->|"builds"| INT
+    DBT -.->|"builds"| MART
+    RAW --> STG --> INT --> MART
+    MART --> APPPY --> VIEWS
+    VIEWS --> BTN -->|"chart context"| GROQ
+    GROQ -->|"insight"| BTN
+```
+
+## The data model — star schema
+
+Three dimension tables (orange) and three fact tables (red).
+`fact_payment_prescribing` is the headline analytical table —
+a `FULL OUTER JOIN` of payments and prescribing on
+`(physician × company)`, capturing every relationship type:
+**paid_and_prescribed**, **paid_no_rx**, and **rx_no_payment**.
+
+```mermaid
+erDiagram
+    DIM_PHYSICIAN {
+        text physician_npi PK
+        text physician_display_id "Anonymized"
+        text specialty
+        text state
+        bool received_pharma_payments
+    }
+    DIM_COMPANY {
+        text company_name PK
+        text company_display_name "Pfizer, AbbVie..."
+        text therapeutic_areas
+    }
+    DIM_DRUG {
+        text drug_key PK
+        text drug_brand_name
+        text drug_generic_name
+        text therapeutic_class
+    }
+    FACT_PAYMENTS {
+        text payment_id
+        text physician_npi FK
+        text company_name FK
+        date payment_date
+        numeric payment_amount_usd
+        text payment_category
+    }
+    FACT_PRESCRIPTIONS {
+        text prescription_id
+        text physician_npi FK
+        text company_name FK
+        text therapeutic_class
+        int total_claim_count
+    }
+    FACT_PAYMENT_PRESCRIBING {
+        text physician_npi FK
+        text company_name FK
+        numeric total_payment_usd
+        int company_claim_count
+        text relationship_type
+    }
+    DIM_PHYSICIAN ||--o{ FACT_PAYMENTS : "has many"
+    DIM_COMPANY  ||--o{ FACT_PAYMENTS : "pays"
+    DIM_PHYSICIAN ||--o{ FACT_PRESCRIPTIONS : "prescribes"
+    DIM_COMPANY  ||--o{ FACT_PRESCRIPTIONS : "manufactures"
+    DIM_PHYSICIAN ||--o{ FACT_PAYMENT_PRESCRIBING : "paired with"
+    DIM_COMPANY  ||--o{ FACT_PAYMENT_PRESCRIBING : "paired with"
+```
+
+## Go deeper
+
+| Document | Covers |
+|---|---|
+| [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md) | dbt model lineage (all 12 models), user-interaction sequence, LLM "Explain this chart" flow |
+| [**docs/DATA_MODEL.md**](./docs/DATA_MODEL.md) | Full table reference, data-quality enforcement (59 tests), privacy-by-design |
+| [**METHODOLOGY.md**](./METHODOLOGY.md) | Statistical formulas (lift ratio, HHI, investment ratio), the BMS reporting quirk, what we can and cannot conclude |
 
 ---
 
