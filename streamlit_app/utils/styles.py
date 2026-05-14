@@ -333,11 +333,16 @@ div[data-testid="stPlotlyChart"] {
 .hero-card-sub {
     color: #CBD5E1;
     font-size: 1rem;
-    line-height: 1.55;
-    max-width: 760px;
+    line-height: 1.6;
+    max-width: 780px;
     margin: 0 0 1.25rem 0;
 }
-.hero-card-sub strong { color: #FBBF24; font-weight: 700; }
+/* Single accent style for the *one* highlighted phrase in the subtitle —
+   white-bold, no color, so it doesn't compete with the title gradient. */
+.hero-card-sub strong {
+    color: #FFFFFF;
+    font-weight: 600;
+}
 
 /* KPI strip inside the hero */
 .hero-stats {
@@ -363,22 +368,40 @@ div[data-testid="stPlotlyChart"] {
     margin-top: 0.15rem;
 }
 
-/* Tech pills row */
+/* Tech pills row — each gets a per-technology accent color */
 .hero-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.55rem;
     margin-top: 1.25rem;
 }
 .hero-pill {
-    background: rgba(255,255,255,0.08);
-    color: #E2E8F0;
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15,23,42,0.55);
+    color: #F1F5F9;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(4px);
 }
+.hero-pill::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.95;
+}
+.hero-pill.postgres { color: #60A5FA; }   /* blue */
+.hero-pill.dbt      { color: #FB923C; }   /* orange */
+.hero-pill.streamlit{ color: #F87171; }   /* red */
+.hero-pill.groq     { color: #34D399; }   /* emerald */
+.hero-pill.plotly   { color: #A78BFA; }   /* violet */
+.hero-pill .pill-text { color: #F1F5F9; }
 
 /* ── Chart-level intro block: explains what + what to look for ───────────── */
 .chart-intro {
@@ -481,7 +504,7 @@ def hero_card(
     title_accent: str,
     subtitle: str,
     stats: list[tuple[str, str]],
-    pills: list[str] | None = None,
+    pills: list[tuple[str, str]] | None = None,
 ) -> None:
     """Render the gradient hero card for the dashboard landing.
 
@@ -491,7 +514,8 @@ def hero_card(
         title_accent: gradient-colored portion (e.g. "Analytics")
         subtitle: one-sentence description (supports **bold**)
         stats: list of (value, label) tuples shown in the KPI strip
-        pills: optional list of tech-pill strings (e.g. ["Postgres · dbt"])
+        pills: optional list of (label, css_class) tuples for tech badges.
+            Class names available: postgres, dbt, streamlit, groq, plotly.
     """
     stats_html = "".join(
         f'<div class="hero-stat">'
@@ -502,7 +526,12 @@ def hero_card(
     )
     pills_html = ""
     if pills:
-        pill_items = "".join(f'<span class="hero-pill">{p}</span>' for p in pills)
+        pill_items = "".join(
+            f'<span class="hero-pill {css_class}">'
+            f'<span class="pill-text">{label}</span>'
+            f"</span>"
+            for label, css_class in pills
+        )
         pills_html = f'<div class="hero-pills">{pill_items}</div>'
 
     html = (

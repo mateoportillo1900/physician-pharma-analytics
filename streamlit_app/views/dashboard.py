@@ -46,11 +46,9 @@ hero_card(
     title_lead="Physician × Pharma",
     title_accent="Commercial Analytics",
     subtitle=(
-        "A self-serve platform that joins **CMS Open Payments** "
-        "(every dollar pharma companies pay U.S. physicians, required by "
-        "the Sunshine Act) with **Medicare Part D Prescribing** data — "
-        "answering the question every pharma commercial team asks: "
-        "**do paid physicians prescribe more of that company's drugs?**"
+        "Joining CMS Open Payments with Medicare Part D prescribing to "
+        "answer the core question every pharma commercial team asks — "
+        "**do paid physicians prescribe more?**"
     ),
     stats=[
         (f"${total_m:.0f}M", "Total 2022 Spend"),
@@ -59,11 +57,11 @@ hero_card(
         (f"{paid_physicians:,}", "Paid Physicians"),
     ],
     pills=[
-        "Neon Postgres",
-        "dbt · 12 models",
-        "Streamlit",
-        "Groq · Llama 3.3 70B",
-        "Plotly",
+        ("Neon Postgres", "postgres"),
+        ("dbt · 12 models", "dbt"),
+        ("Streamlit", "streamlit"),
+        ("Groq · Llama 3.3 70B", "groq"),
+        ("Plotly", "plotly"),
     ],
 )
 
