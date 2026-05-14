@@ -70,7 +70,7 @@ def get_filter_options(table: str, column: str, limit: int = 200) -> list[str]:
     df = run_query(
         f"""
         SELECT DISTINCT {column}
-        FROM mart.{table}
+        FROM raw_mart.{table}
         WHERE {column} IS NOT NULL
         ORDER BY {column}
         LIMIT %s

@@ -72,15 +72,15 @@ st.divider()
 # ─── KPI strip ───────────────────────────────────────────────────────────────
 kpis = run_query("""
     SELECT
-        (SELECT COUNT(*)  FROM mart.fact_payments)              AS payment_count,
-        (SELECT SUM(payment_amount_usd) FROM mart.fact_payments) AS total_payments,
+        (SELECT COUNT(*)  FROM raw_mart.fact_payments)              AS payment_count,
+        (SELECT SUM(payment_amount_usd) FROM raw_mart.fact_payments) AS total_payments,
         (SELECT COUNT(DISTINCT company_name)
-            FROM mart.fact_payments)                            AS companies,
+            FROM raw_mart.fact_payments)                            AS companies,
         (SELECT COUNT(DISTINCT physician_npi)
-            FROM mart.fact_payments)                            AS paid_physicians,
-        (SELECT COUNT(*)  FROM mart.dim_physician)              AS total_physicians,
+            FROM raw_mart.fact_payments)                            AS paid_physicians,
+        (SELECT COUNT(*)  FROM raw_mart.dim_physician)              AS total_physicians,
         (SELECT SUM(total_claim_count)
-            FROM mart.dim_physician)                            AS total_claims
+            FROM raw_mart.dim_physician)                            AS total_claims
 """)
 
 c1, c2, c3, c4 = st.columns(4)
@@ -105,7 +105,7 @@ with col1:
         SELECT
             company_name,
             ROUND(SUM(payment_amount_usd)::numeric / 1e6, 2) AS spend_millions
-        FROM mart.fact_payments
+        FROM raw_mart.fact_payments
         GROUP BY company_name
         ORDER BY spend_millions DESC
         LIMIT 15
@@ -135,7 +135,7 @@ with col2:
         SELECT
             payment_category,
             ROUND(SUM(payment_amount_usd)::numeric / 1e6, 2) AS spend_millions
-        FROM mart.fact_payments
+        FROM raw_mart.fact_payments
         GROUP BY payment_category
         ORDER BY spend_millions DESC
     """)
@@ -167,8 +167,8 @@ with col3:
             dp.specialty,
             ROUND(SUM(fp.payment_amount_usd)::numeric / 1e6, 2) AS spend_millions,
             COUNT(DISTINCT fp.physician_npi) AS physicians_paid
-        FROM mart.fact_payments AS fp
-        JOIN mart.dim_physician AS dp USING (physician_npi)
+        FROM raw_mart.fact_payments AS fp
+        JOIN raw_mart.dim_physician AS dp USING (physician_npi)
         WHERE dp.specialty IS NOT NULL AND dp.specialty != 'Unknown'
         GROUP BY dp.specialty
         ORDER BY spend_millions DESC
@@ -205,7 +205,7 @@ with col4:
             COUNT(*) AS n_physicians,
             ROUND(AVG(total_claim_count)::numeric, 0) AS avg_claims,
             ROUND(AVG(total_drug_cost_usd)::numeric, 0) AS avg_drug_cost
-        FROM mart.dim_physician
+        FROM raw_mart.dim_physician
         WHERE total_claim_count IS NOT NULL
         GROUP BY received_pharma_payments
     """)

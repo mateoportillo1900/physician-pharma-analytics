@@ -40,14 +40,14 @@ st.info(
 # ─── Filters ─────────────────────────────────────────────────────────────────
 companies = run_query("""
     SELECT DISTINCT company_name
-    FROM mart.fact_payment_prescribing
+    FROM raw_mart.fact_payment_prescribing
     WHERE total_payment_usd > 0 AND company_claim_count > 0
     ORDER BY company_name
 """)["company_name"].tolist()
 
 specialties = run_query("""
     SELECT DISTINCT specialty
-    FROM mart.fact_payment_prescribing
+    FROM raw_mart.fact_payment_prescribing
     WHERE specialty IS NOT NULL AND specialty != 'Unknown'
     ORDER BY specialty
 """)["specialty"].tolist()
@@ -85,7 +85,7 @@ summary_df = run_query(
             1
         ) AS median_claims,
         ROUND(SUM(company_claim_count)::numeric, 0) AS total_claims
-    FROM mart.fact_payment_prescribing
+    FROM raw_mart.fact_payment_prescribing
     WHERE company_name = %s
         AND company_claim_count > 0
         {spec_filter}
@@ -180,7 +180,7 @@ scatter_df = run_query(
         company_claim_count,
         specialty,
         state
-    FROM mart.fact_payment_prescribing
+    FROM raw_mart.fact_payment_prescribing
     WHERE company_name = %s
         AND total_payment_usd > 0
         AND company_claim_count > 0

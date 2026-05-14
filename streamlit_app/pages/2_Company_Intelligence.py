@@ -31,7 +31,7 @@ companies = run_query("""
     SELECT
         company_name,
         ROUND(SUM(payment_amount_usd)::numeric / 1e6, 1) AS total_m
-    FROM mart.fact_payments
+    FROM raw_mart.fact_payments
     GROUP BY company_name
     ORDER BY total_m DESC
 """)
@@ -54,7 +54,7 @@ kpis = run_query(
         COUNT(*) AS n_payments,
         COUNT(DISTINCT physician_npi) AS physicians_paid,
         AVG(payment_amount_usd) AS avg_payment
-    FROM mart.fact_payments
+    FROM raw_mart.fact_payments
     WHERE company_name = %s
     """,
     params=(selected_company,),
@@ -75,8 +75,8 @@ with col1:
         SELECT
             dp.specialty,
             ROUND(SUM(fp.payment_amount_usd)::numeric / 1000, 1) AS spend_k
-        FROM mart.fact_payments AS fp
-        JOIN mart.dim_physician AS dp USING (physician_npi)
+        FROM raw_mart.fact_payments AS fp
+        JOIN raw_mart.dim_physician AS dp USING (physician_npi)
         WHERE fp.company_name = %s
             AND dp.specialty IS NOT NULL AND dp.specialty != 'Unknown'
         GROUP BY dp.specialty
@@ -111,7 +111,7 @@ with col2:
         SELECT
             payment_category,
             ROUND(SUM(payment_amount_usd)::numeric / 1000, 1) AS spend_k
-        FROM mart.fact_payments
+        FROM raw_mart.fact_payments
         WHERE company_name = %s
         GROUP BY payment_category
         ORDER BY spend_k DESC
@@ -145,7 +145,7 @@ geo_df = run_query(
         recipient_state AS state,
         ROUND(SUM(payment_amount_usd)::numeric / 1000, 1) AS spend_k,
         COUNT(DISTINCT physician_npi) AS physicians
-    FROM mart.fact_payments
+    FROM raw_mart.fact_payments
     WHERE company_name = %s
         AND recipient_state IS NOT NULL
         AND length(recipient_state) = 2
@@ -184,8 +184,8 @@ top_phys = run_query(
         SUM(fp.payment_amount_usd) AS total_paid,
         COUNT(*) AS payment_count,
         MAX(fp.payment_amount_usd) AS largest_single
-    FROM mart.fact_payments AS fp
-    JOIN mart.dim_physician AS dp USING (physician_npi)
+    FROM raw_mart.fact_payments AS fp
+    JOIN raw_mart.dim_physician AS dp USING (physician_npi)
     WHERE fp.company_name = %s
     GROUP BY dp.physician_display_id, dp.specialty, dp.state
     ORDER BY total_paid DESC

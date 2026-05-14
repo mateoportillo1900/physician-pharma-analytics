@@ -39,7 +39,7 @@ st.info(
 
 # ─── Filter: optional company ───────────────────────────────────────────────
 all_companies = run_query(
-    "SELECT DISTINCT company_name FROM mart.fact_payments ORDER BY company_name"
+    "SELECT DISTINCT company_name FROM raw_mart.fact_payments ORDER BY company_name"
 )["company_name"].tolist()
 
 selected = st.selectbox(
@@ -65,7 +65,7 @@ market_df = run_query(
             recipient_state AS state,
             SUM(payment_amount_usd) AS state_payment_usd,
             COUNT(DISTINCT physician_npi) AS paid_physicians
-        FROM mart.fact_payments
+        FROM raw_mart.fact_payments
         {company_filter_payments}
             {("AND" if company_filter_payments else "WHERE")}
             recipient_state IS NOT NULL AND length(recipient_state) = 2
@@ -76,8 +76,8 @@ market_df = run_query(
             dp.state,
             SUM(fr.total_claim_count) AS state_claim_count,
             SUM(fr.total_drug_cost_usd) AS state_drug_cost_usd
-        FROM mart.fact_prescriptions AS fr
-        JOIN mart.dim_physician AS dp USING (physician_npi)
+        FROM raw_mart.fact_prescriptions AS fr
+        JOIN raw_mart.dim_physician AS dp USING (physician_npi)
         {company_filter_rx}
             {("AND" if company_filter_rx else "WHERE")}
             dp.state IS NOT NULL AND length(dp.state) = 2

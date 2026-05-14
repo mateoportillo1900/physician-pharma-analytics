@@ -28,12 +28,12 @@ st.markdown(
 
 # ─── Filters ─────────────────────────────────────────────────────────────────
 classes = run_query(
-    "SELECT DISTINCT therapeutic_class FROM mart.fact_prescriptions "
+    "SELECT DISTINCT therapeutic_class FROM raw_mart.fact_prescriptions "
     "ORDER BY therapeutic_class"
 )["therapeutic_class"].tolist()
 
 states = run_query(
-    "SELECT DISTINCT state FROM mart.dim_physician "
+    "SELECT DISTINCT state FROM raw_mart.dim_physician "
     "WHERE state IS NOT NULL AND length(state) = 2 ORDER BY state"
 )["state"].tolist()
 
@@ -72,7 +72,7 @@ query = f"""
             fp.physician_npi,
             SUM(fp.total_claim_count) AS class_claims,
             SUM(fp.total_drug_cost_usd) AS class_drug_cost
-        FROM mart.fact_prescriptions AS fp
+        FROM raw_mart.fact_prescriptions AS fp
         WHERE fp.therapeutic_class = %s
         GROUP BY fp.physician_npi
     ),
@@ -80,10 +80,10 @@ query = f"""
         SELECT
             fpp.physician_npi,
             SUM(fpp.total_payment_usd) AS total_payment_usd
-        FROM mart.fact_payment_prescribing AS fpp
+        FROM raw_mart.fact_payment_prescribing AS fpp
         WHERE fpp.company_name IN (
             SELECT DISTINCT company_name
-            FROM mart.fact_prescriptions
+            FROM raw_mart.fact_prescriptions
             WHERE therapeutic_class = %s
         )
         GROUP BY fpp.physician_npi
@@ -98,7 +98,7 @@ query = f"""
         COALESCE(p.total_payment_usd, 0) AS total_payments_usd,
         CASE WHEN dp.received_pharma_payments THEN '✓' ELSE '—' END AS paid
     FROM class_volume AS cv
-    JOIN mart.dim_physician AS dp USING (physician_npi)
+    JOIN raw_mart.dim_physician AS dp USING (physician_npi)
     LEFT JOIN payments_for_class AS p ON cv.physician_npi = p.physician_npi
     WHERE TRUE
         {payment_filter_sql}
