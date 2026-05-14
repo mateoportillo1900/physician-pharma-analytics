@@ -16,28 +16,36 @@ import streamlit as st
 from utils.charts import bar_chart, scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
+from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
 
 st.set_page_config(
-    page_title="Payment vs. Prescribing", page_icon="📈", layout="wide"
+    page_title=f"{APP_NAME} | Payment vs. Prescribing",
+    page_icon=PAGE_ICON,
+    layout="wide",
 )
+apply_global_styles()
 
-st.title("📈 Payment vs. Prescribing")
-st.markdown(
-    "**Do physicians who receive payments from a pharma company prescribe "
-    "more of that company's drugs?** A published research question "
-    "(*JAMA Internal Medicine*, 2016), reproducible here on 2022 CMS data."
+hero(
+    title="Payment vs. Prescribing",
+    subtitle=(
+        "Do physicians who receive payments from a pharma company prescribe "
+        "more of that company's drugs? A published research question "
+        "(JAMA Internal Medicine, 2016), reproducible here on 2022 CMS data."
+    ),
+    meta="Backed by analyses/02_payment_prescribing_correlation.sql",
 )
 
 st.info(
-    "**Methodology note**: These analyses are descriptive, not causal. "
-    "Payments and prescribing in observational data may reflect physicians "
-    "self-selecting into pharma relationships based on their existing "
-    "prescribing patterns. See the `lift ratio` as an association measure, "
-    "not a treatment effect."
+    "**Methodology note.** Analyses are descriptive, not causal. "
+    "Observational data cannot distinguish *payment-influences-prescribing* "
+    "from *prescribers-attract-payments*. Treat the lift ratio as an "
+    "association measure, not a treatment effect."
 )
 
 
 # ─── Filters ─────────────────────────────────────────────────────────────────
+section_heading("Filters")
+
 companies = run_query("""
     SELECT DISTINCT company_name
     FROM raw_mart.fact_payment_prescribing
@@ -115,25 +123,16 @@ except (IndexError, ZeroDivisionError):
 
 
 # ─── KPIs ────────────────────────────────────────────────────────────────────
-st.subheader(f"{selected_company} — {selected_specialty}")
+section_heading(f"{selected_company} — {selected_specialty}")
 
 c1, c2, c3, c4 = st.columns(4)
 
 paid_row = summary_df[summary_df["group_label"] == "Received payments"].iloc[0]
 unpaid_row = summary_df[summary_df["group_label"] == "No payments"].iloc[0]
 
-c1.metric(
-    "Paid Physicians (n)",
-    f"{paid_row['n_physicians']:,}",
-)
-c2.metric(
-    "Avg Claims — Paid",
-    f"{paid_row['avg_claims']:,.0f}",
-)
-c3.metric(
-    "Avg Claims — Unpaid",
-    f"{unpaid_row['avg_claims']:,.0f}",
-)
+c1.metric("Paid Physicians (n)", f"{paid_row['n_physicians']:,}")
+c2.metric("Avg Claims — Paid", f"{paid_row['avg_claims']:,.0f}")
+c3.metric("Avg Claims — Unpaid", f"{unpaid_row['avg_claims']:,.0f}")
 c4.metric(
     "Lift Ratio",
     f"{lift:.2f}×" if lift else "N/A",
@@ -171,7 +170,7 @@ render_explain_button(
 
 
 # ─── Scatter: $ vs Rx for paid physicians ───────────────────────────────────
-st.subheader("Payment Amount vs. Prescribing Volume (Paid Physicians)")
+section_heading("Payment Amount vs. Prescribing Volume")
 
 scatter_df = run_query(
     f"""
@@ -190,7 +189,6 @@ scatter_df = run_query(
 )
 
 if not scatter_df.empty and len(scatter_df) >= 10:
-    # Pearson correlation
     pearson = scatter_df["total_payment_usd"].corr(scatter_df["company_claim_count"])
 
     fig = scatter_chart(

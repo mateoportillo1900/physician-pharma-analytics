@@ -1,8 +1,8 @@
 [theme]
-primaryColor = "#0066CC"
+primaryColor = "#1E3A8A"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F5F7FA"
-textColor = "#1A2332"
+secondaryBackgroundColor = "#F8FAFC"
+textColor = "#0F172A"
 font = "sans serif"
 
 [browser]
@@ -10,3 +10,6 @@ gatherUsageStats = false
 
 [server]
 maxUploadSize = 50
+
+[ui]
+hideTopBar = false

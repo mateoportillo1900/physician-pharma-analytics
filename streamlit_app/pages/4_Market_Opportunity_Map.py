@@ -16,35 +16,44 @@ import streamlit as st
 from utils.charts import choropleth_us
 from utils.db import run_query
 from utils.llm import render_explain_button
+from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
 
 st.set_page_config(
-    page_title="Market Opportunity Map", page_icon="🗺️", layout="wide"
+    page_title=f"{APP_NAME} | Market Opportunity Map",
+    page_icon=PAGE_ICON,
+    layout="wide",
 )
+apply_global_styles()
 
-st.title("🗺️ Market Opportunity Map")
-st.markdown(
-    "**Where is pharma over- or under-invested relative to Part D "
-    "prescribing volume?** Use this view to identify potential growth "
-    "markets and saturation risks."
+hero(
+    title="Market Opportunity Map",
+    subtitle=(
+        "Where is pharma over- or under-invested relative to Part D "
+        "prescribing volume? Identify growth markets and saturation risks."
+    ),
+    meta="Backed by analyses/04_geographic_market_analysis.sql",
 )
 
 st.info(
-    "**How to read this**: The *investment ratio* compares a state's share "
+    "**How to read this.** The *investment ratio* compares a state's share "
     "of national pharma payments to its share of national prescribing "
-    "volume. **1.0 = perfectly proportional**. Above 1.25 = over-invested "
+    "volume. **1.0 = perfectly proportional.** Above 1.25 = over-invested "
     "(spending more than prescribing volume justifies). Below 0.75 = "
     "under-invested (a possible coverage gap)."
 )
 
 
-# ─── Filter: optional company ───────────────────────────────────────────────
+# ─── Filter ──────────────────────────────────────────────────────────────────
+section_heading("Filter")
+
 all_companies = run_query(
     "SELECT DISTINCT company_name FROM raw_mart.fact_payments ORDER BY company_name"
 )["company_name"].tolist()
 
 selected = st.selectbox(
-    "View for:",
+    "Company view",
     ["All companies"] + all_companies,
+    label_visibility="collapsed",
 )
 
 
@@ -152,7 +161,7 @@ market_df = run_query(
 
 
 # ─── Map ─────────────────────────────────────────────────────────────────────
-st.subheader(f"Investment Ratio by State — {selected}")
+section_heading(f"Investment Ratio by State — {selected}")
 
 fig = choropleth_us(
     market_df,
@@ -177,6 +186,8 @@ render_explain_button(
 
 
 # ─── Tables: top under-invested + top over-invested ─────────────────────────
+section_heading("Strategic Implications")
+
 col1, col2 = st.columns(2)
 
 under = (
@@ -191,7 +202,7 @@ over = (
 )
 
 with col1:
-    st.markdown("##### 🟢 Top Under-Invested States *(growth opportunities)*")
+    st.markdown("##### Under-Invested *(growth opportunities)*")
     display = under[
         ["state", "investment_ratio", "payment_share_pct", "prescribing_share_pct"]
     ].copy()
@@ -210,7 +221,7 @@ with col1:
     )
 
 with col2:
-    st.markdown("##### 🔴 Top Over-Invested States *(saturation risk)*")
+    st.markdown("##### Over-Invested *(saturation risk)*")
     display = over[
         ["state", "investment_ratio", "payment_share_pct", "prescribing_share_pct"]
     ].copy()

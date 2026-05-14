@@ -2,9 +2,9 @@
 KOL Finder
 ══════════
 
-The page recruiters spend the most time on. Lets a user pick a therapeutic
-class + filters and instantly see the top Key Opinion Leaders by Part D
-prescribing volume, with their payment relationships overlaid.
+Lets a user pick a therapeutic class + filters and instantly see the top
+Key Opinion Leaders by Part D prescribing volume, with their payment
+relationships overlaid.
 
 Backing analysis: dbt_project/analyses/01_kol_identification.sql
 """
@@ -16,17 +16,29 @@ import streamlit as st
 from utils.charts import scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
+from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
 
-st.set_page_config(page_title="KOL Finder", page_icon="🔍", layout="wide")
+st.set_page_config(
+    page_title=f"{APP_NAME} | KOL Finder",
+    page_icon=PAGE_ICON,
+    layout="wide",
+)
+apply_global_styles()
 
-st.title("🔍 KOL Finder")
-st.markdown(
-    "**Identify the top Key Opinion Leaders** (highest-volume Part D "
-    "prescribers) for a given therapeutic class, with their pharma "
-    "payment relationships overlaid."
+hero(
+    title="KOL Finder",
+    subtitle=(
+        "Identify the top Key Opinion Leaders (highest-volume Part D "
+        "prescribers) for a given therapeutic class, with their pharma "
+        "payment relationships overlaid."
+    ),
+    meta="Backed by analyses/01_kol_identification.sql",
 )
 
+
 # ─── Filters ─────────────────────────────────────────────────────────────────
+section_heading("Filters")
+
 classes = run_query(
     "SELECT DISTINCT therapeutic_class FROM raw_mart.fact_prescriptions "
     "ORDER BY therapeutic_class"
@@ -59,12 +71,6 @@ payment_filter_sql = {
     "Unpaid only": "AND dp.received_pharma_payments = FALSE",
     "All physicians": "",
 }[payment_filter]
-
-params: tuple = (selected_class,)
-if selected_states:
-    params = (selected_class, selected_states, top_n)
-else:
-    params = (selected_class, top_n)
 
 query = f"""
     WITH class_volume AS (
@@ -107,7 +113,6 @@ query = f"""
     LIMIT %s
 """
 
-# Adjust params depending on whether state filter is applied
 if selected_states:
     params = (selected_class, selected_class, selected_states, top_n)
 else:
@@ -121,7 +126,7 @@ if kol_df.empty:
     st.stop()
 
 # ─── Table ───────────────────────────────────────────────────────────────────
-st.subheader(f"Top {len(kol_df)} KOLs — {selected_class}")
+section_heading(f"Top {len(kol_df)} KOLs — {selected_class}")
 
 display_df = kol_df.copy()
 display_df["class_claims"] = display_df["class_claims"].apply(lambda x: f"{x:,}")
@@ -135,7 +140,7 @@ display_df.columns = ["Rank", "Physician", "Specialty", "State",
                       "Class Claims", "Class Drug Cost",
                       "Payments Received", "Paid"]
 
-st.dataframe(display_df, use_container_width=True, hide_index=True, height=400)
+st.dataframe(display_df, use_container_width=True, hide_index=True, height=420)
 
 render_explain_button(
     chart_title=f"Top KOLs in {selected_class}",
@@ -154,9 +159,9 @@ render_explain_button(
 )
 
 # ─── Visual: KOL volume vs payments scatter ──────────────────────────────────
-st.subheader("Prescribing Volume vs. Pharma Payments")
+section_heading("Volume vs. Payments")
 st.caption(
-    "Each dot is one of the top KOLs. Logarithmic axes — payments span "
+    "Each point is one of the top KOLs. Logarithmic axes — payments span "
     "many orders of magnitude."
 )
 

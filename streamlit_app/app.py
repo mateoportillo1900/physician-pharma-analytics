@@ -2,15 +2,11 @@
 Physician–Pharma Commercial Analytics Platform
 ═══════════════════════════════════════════════
 
-Streamlit entry point. The five analytical views live in streamlit_app/pages/
+Streamlit entry point. The four sub-pages live in streamlit_app/pages/
 and are auto-discovered by Streamlit's multipage router.
 
 Run locally:
     streamlit run streamlit_app/app.py
-
-Deploy:
-    Streamlit Cloud free tier — connect repo, set GROQ_API_KEY + DATABASE_URL
-    as secrets.
 """
 
 from __future__ import annotations
@@ -20,83 +16,84 @@ import streamlit as st
 from utils.charts import bar_chart, donut_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
+from utils.styles import APP_NAME, PAGE_ICON, apply_global_styles, hero, section_heading
 
-# ─── Page config ─────────────────────────────────────────────────────────────
+# ─── Page config — first Streamlit call, must precede everything else ────────
 st.set_page_config(
-    page_title="Pharma Commercial Analytics | Physician × Payment Platform",
-    page_icon="💊",
+    page_title=f"{APP_NAME} | Executive Dashboard",
+    page_icon=PAGE_ICON,
     layout="wide",
     initial_sidebar_state="expanded",
 )
+apply_global_styles()
 
 
-# ─── Sidebar branding ────────────────────────────────────────────────────────
+# ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.title("💊 Pharma Analytics")
-    st.caption(
-        "Built on CMS Open Payments + Medicare Part D, 2022 reporting year"
-    )
+    st.markdown(f"## {PAGE_ICON}  {APP_NAME}")
+    st.caption("Commercial intelligence on CMS Open Payments + Medicare Part D")
     st.divider()
-    st.markdown("**Navigation**")
     st.markdown(
         """
+        **Navigation**
+
         Use the menu above to explore:
-        - 📊 Executive Dashboard *(this page)*
-        - 🔍 KOL Finder
-        - 🏢 Company Intelligence
-        - 📈 Payment vs. Prescribing
-        - 🗺️ Market Opportunity Map
+        - **Executive Dashboard** *(this page)*
+        - **KOL Finder**
+        - **Company Intelligence**
+        - **Payment vs. Prescribing**
+        - **Market Opportunity Map**
         """
     )
     st.divider()
     st.caption(
-        "Source code & methodology: "
-        "[GitHub](https://github.com/) · "
-        "[Sunshine Act](https://www.cms.gov/openpayments)"
+        "**Sources** · "
+        "[CMS Open Payments](https://www.cms.gov/openpayments) · "
+        "[Medicare Part D PUF](https://data.cms.gov)"
     )
+    st.caption("All physician identifiers are anonymized surrogate IDs.")
 
 
 # ─── Hero ────────────────────────────────────────────────────────────────────
-st.title("Physician × Pharma Commercial Analytics")
-st.markdown(
-    "**A self-serve analytics platform exploring the relationship between "
-    "pharmaceutical industry payments and Medicare Part D prescribing.**"
+hero(
+    title="Physician × Pharma Commercial Analytics",
+    subtitle=(
+        "A self-serve analytics platform exploring the relationship between "
+        "pharmaceutical industry payments and Medicare Part D prescribing — "
+        "the foundational analysis behind every pharma commercial team."
+    ),
+    meta="CMS Open Payments + Medicare Part D · 2022 reporting year · 10 tracked manufacturers",
 )
-st.caption(
-    "Data: CMS Open Payments (General Payments) + Medicare Part D Prescriber "
-    "Public Use File · 2022 reporting year · 20 tracked manufacturers"
-)
-st.divider()
 
 
 # ─── KPI strip ───────────────────────────────────────────────────────────────
+section_heading("Overview")
+
 kpis = run_query("""
     SELECT
-        (SELECT COUNT(*)  FROM raw_mart.fact_payments)              AS payment_count,
+        (SELECT COUNT(*)  FROM raw_mart.fact_payments)             AS payment_count,
         (SELECT SUM(payment_amount_usd) FROM raw_mart.fact_payments) AS total_payments,
         (SELECT COUNT(DISTINCT company_name)
-            FROM raw_mart.fact_payments)                            AS companies,
+            FROM raw_mart.fact_payments)                           AS companies,
         (SELECT COUNT(DISTINCT physician_npi)
-            FROM raw_mart.fact_payments)                            AS paid_physicians,
-        (SELECT COUNT(*)  FROM raw_mart.dim_physician)              AS total_physicians,
-        (SELECT SUM(total_claim_count)
-            FROM raw_mart.dim_physician)                            AS total_claims
+            FROM raw_mart.fact_payments)                           AS paid_physicians,
+        (SELECT COUNT(*)  FROM raw_mart.dim_physician)             AS total_physicians
 """)
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total Pharma Payments", f"${kpis['total_payments'].iloc[0] / 1e6:.0f}M")
+c1.metric("Total Pharma Spend", f"${kpis['total_payments'].iloc[0] / 1e6:.0f}M")
 c2.metric("Payment Records", f"{kpis['payment_count'].iloc[0]:,}")
 c3.metric("Companies Tracked", f"{kpis['companies'].iloc[0]:,}")
 c4.metric(
     "Paid Physicians",
     f"{kpis['paid_physicians'].iloc[0]:,}",
-    delta=f"of {kpis['total_physicians'].iloc[0]:,} active prescribers",
+    delta=f"of {kpis['total_physicians'].iloc[0]:,} in dataset",
     delta_color="off",
 )
 
 
-# ─── Row 1: top companies + payment type breakdown ───────────────────────────
-st.subheader("Where the Money Goes")
+# ─── Row 1: Top companies + payment categories ───────────────────────────────
+section_heading("Where the Money Goes")
 
 col1, col2 = st.columns([3, 2])
 
@@ -113,10 +110,10 @@ with col1:
     fig = bar_chart(
         top_companies.sort_values("spend_millions"),
         x="spend_millions", y="company_name",
-        title="Top 15 Companies by Total Payments ($M)",
+        title="Top 15 Companies by Total 2022 Spend ($M)",
         orientation="h",
     )
-    fig.update_xaxes(title="Total Payments ($ Millions)")
+    fig.update_xaxes(title="Spend ($ Millions)")
     fig.update_yaxes(title=None)
     st.plotly_chart(fig, use_container_width=True)
 
@@ -156,8 +153,8 @@ with col2:
     )
 
 
-# ─── Row 2: spend by specialty + paid vs unpaid prescribing ──────────────────
-st.subheader("Who Receives the Payments")
+# ─── Row 2: Spend by specialty + paid vs unpaid ─────────────────────────────
+section_heading("Who Receives the Payments")
 
 col3, col4 = st.columns(2)
 
@@ -180,16 +177,15 @@ with col3:
         title="Top 12 Specialties by Payments Received ($M)",
         orientation="h",
     )
-    fig.update_xaxes(title="Total Payments ($ Millions)")
+    fig.update_xaxes(title="Spend ($ Millions)")
     fig.update_yaxes(title=None)
     st.plotly_chart(fig, use_container_width=True)
 
     render_explain_button(
         chart_title="Spend by Specialty",
         business_question=(
-            "Which physician specialties received the most pharma "
-            "payments, and what does that reveal about pharma's "
-            "commercial priorities?"
+            "Which physician specialties received the most pharma payments, "
+            "and what does that reveal about pharma's commercial priorities?"
         ),
         data=spend_by_specialty,
         key_suffix="spec_spend",
@@ -203,8 +199,7 @@ with col4:
                 ELSE 'No payments'
             END AS group_label,
             COUNT(*) AS n_physicians,
-            ROUND(AVG(total_claim_count)::numeric, 0) AS avg_claims,
-            ROUND(AVG(total_drug_cost_usd)::numeric, 0) AS avg_drug_cost
+            ROUND(AVG(total_claim_count)::numeric, 0) AS avg_claims
         FROM raw_mart.dim_physician
         WHERE total_claim_count IS NOT NULL
         GROUP BY received_pharma_payments
@@ -223,9 +218,8 @@ with col4:
         chart_title="Paid vs. Unpaid Physician Prescribing",
         business_question=(
             "Do physicians who received pharma payments prescribe more "
-            "than those who didn't? (Note: this is a high-level summary; "
-            "the Payment vs. Prescribing page does the specialty-controlled "
-            "version.)"
+            "than those who didn't? (Specialty-controlled version is on "
+            "the Payment vs. Prescribing page.)"
         ),
         data=paid_vs_unpaid,
         key_suffix="paid_vs_unpaid",
@@ -235,10 +229,10 @@ with col4:
 # ─── Footer ──────────────────────────────────────────────────────────────────
 st.divider()
 
-with st.expander("ℹ️ Data sources, methodology, and disclaimers"):
+with st.expander("Data sources, methodology, and disclaimers"):
     st.markdown(
         """
-        **Data sources** — All data in this app comes from two publicly
+        **Data sources.** All data in this app comes from two publicly
         released federal datasets:
         - **CMS Open Payments** (openpaymentsdata.cms.gov) — pharma-to-physician
           payment disclosures required by the Sunshine Act
@@ -246,21 +240,21 @@ with st.expander("ℹ️ Data sources, methodology, and disclaimers"):
           aggregated, de-identified prescribing data published by CMS for
           research and transparency
 
-        **No patient data** is processed by this application. The Part D file
-        is aggregated at the provider level; cell counts under 11 are
-        pre-suppressed by CMS for residual privacy. Physician NPIs and
-        names are professional identifiers, not PHI under HIPAA.
+        **No patient data is processed by this application.** The Part D
+        file is aggregated at the provider level; cell counts under 11
+        are pre-suppressed by CMS. Physician NPIs are professional
+        identifiers, not PHI under HIPAA, but the app exposes only
+        anonymized surrogate IDs (e.g., `Physician #4837`).
 
-        **Methodology** — Analyses are **descriptive, not causal**. Payment
+        **Methodology.** Analyses are **descriptive, not causal**. Payment
         and prescribing relationships in observational data may reflect
         physicians self-selecting into pharma relationships based on
         existing prescribing patterns. See `METHODOLOGY.md` in the source
         repository for the full discussion of limitations.
 
-        **Purpose** — This is a portfolio project demonstrating
-        commercial-analytics tradecraft. It is not investigative journalism
-        and makes no claims about the propriety of any specific
-        payment-prescribing relationship.
+        **Purpose.** This is a portfolio project demonstrating
+        commercial-analytics tradecraft. It is not investigative
+        journalism and makes no claims about the propriety of any
+        specific payment-prescribing relationship.
         """
     )
-
