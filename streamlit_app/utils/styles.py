@@ -18,7 +18,6 @@ import streamlit as st
 PAGE_ICON = "📊"
 APP_NAME = "Pharma Analytics"
 GITHUB_URL = "https://github.com/mateoportillo1900/physician-pharma-analytics"
-LINKEDIN_URL = "https://www.linkedin.com/in/mateoportillo/"
 
 # ── View header banner images ────────────────────────────────────────────────
 # Unsplash-hosted, neutral / on-brand. Each view gets its own thematic
@@ -784,8 +783,6 @@ def portfolio_context() -> None:
         '3.58-8-8-8z"/></svg>'
         "View on GitHub"
         "</a>"
-        f'<a class="portfolio-cta muted" href="{LINKEDIN_URL}" '
-        'target="_blank" rel="noopener">Connect on LinkedIn</a>'
         "</div>"
         "</div>"
     )

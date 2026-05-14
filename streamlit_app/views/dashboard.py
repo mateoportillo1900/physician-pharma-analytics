@@ -18,17 +18,11 @@ from utils.styles import (
     chart_intro,
     hero_card,
     page_guide,
-    portfolio_context,
     render_page_cards,
     section_heading,
-    view_banner,
 )
 
 apply_global_styles()
-
-
-# ─── View banner image ───────────────────────────────────────────────────────
-view_banner("dashboard", label="Executive Dashboard")
 
 
 # ─── Pull KPIs first so they can render inside the hero ──────────────────────
@@ -70,10 +64,6 @@ hero_card(
         ("Plotly", "plotly"),
     ],
 )
-
-
-# ─── Portfolio project context ───────────────────────────────────────────────
-portfolio_context()
 
 
 # ─── Strategic guide for new users ───────────────────────────────────────────

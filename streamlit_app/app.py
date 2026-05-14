@@ -55,6 +55,11 @@ nav = st.navigation(
             title="Market Opportunity Map",
             icon=":material/map:",
         ),
+        st.Page(
+            "views/about.py",
+            title="About this project",
+            icon=":material/info:",
+        ),
     ],
     position="hidden",
 )
@@ -107,6 +112,7 @@ with st.sidebar:
     st.page_link(
         "views/market_map.py", label="Market Opportunity Map", icon=":material/map:"
     )
+    st.page_link("views/about.py", label="About this project", icon=":material/info:")
 
     st.divider()
 
