@@ -45,14 +45,13 @@ models:
     mart:
       +materialized: view
       +schema: mart
-      # Materialize the small dimensions and the analytical fact —
-      # they're joined to / queried often. The large pass-through
-      # facts stay as views to keep storage under Neon's 512 MB cap.
+      # Materialize the small dimensions only — fact_payment_prescribing
+      # as a TABLE busts Neon's 512 MB free tier (it's a 1.2M-row join).
+      # Streamlit's 10-min query cache makes the view approach acceptable
+      # for the live demo.
       dim_drug:
         +materialized: table
       dim_company:
         +materialized: table
       dim_physician:
-        +materialized: table
-      fact_payment_prescribing:
         +materialized: table
