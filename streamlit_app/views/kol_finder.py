@@ -94,17 +94,20 @@ query = f"""
         WHERE fp.therapeutic_class = %s
         GROUP BY fp.physician_npi
     ),
+    -- Use the lightweight payments-only bridge instead of
+    -- fact_payment_prescribing (which is a FULL OUTER JOIN view that
+    -- takes ~6 minutes per query on Neon's free-tier compute).
     payments_for_class AS (
         SELECT
-            fpp.physician_npi,
-            SUM(fpp.total_payment_usd) AS total_payment_usd
-        FROM raw_mart.fact_payment_prescribing AS fpp
-        WHERE fpp.company_name IN (
+            b.physician_npi,
+            SUM(b.total_payment_usd) AS total_payment_usd
+        FROM raw_mart.bridge_physician_company_payments AS b
+        WHERE b.company_name IN (
             SELECT DISTINCT company_name
             FROM raw_mart.fact_prescriptions
             WHERE therapeutic_class = %s
         )
-        GROUP BY fpp.physician_npi
+        GROUP BY b.physician_npi
     )
     SELECT
         ROW_NUMBER() OVER (ORDER BY cv.class_claims DESC) AS rank,
@@ -138,7 +141,11 @@ if selected_states:
 else:
     params = (selected_class, selected_class, top_n)
 
-with st.spinner("Finding KOLs..."):
+with st.spinner(
+    "Finding KOLs… (first query after idle takes ~10-20 sec while "
+    "Neon's free-tier compute wakes up; subsequent queries are cached "
+    "and instant)"
+):
     kol_df = run_query(query, params=params)
 
 if kol_df.empty:

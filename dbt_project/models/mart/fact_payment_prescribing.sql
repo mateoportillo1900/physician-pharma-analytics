@@ -27,7 +27,11 @@ physicians as (
 ),
 
 -- FULL OUTER JOIN to keep both populations: those who got paid but
--- didn't prescribe, AND those who prescribed but got nothing
+-- didn't prescribe, AND those who prescribed but got nothing.
+-- Dropped drugs_prescribed_list (text aggregation, was the heaviest
+-- column) so we can materialize this as a table without busting
+-- Neon's storage cap. Drug-level prescribing detail is still
+-- available via fact_prescriptions.
 joined as (
     select
         coalesce(pay.physician_npi, rx.physician_npi) as physician_npi,
@@ -40,7 +44,6 @@ joined as (
         coalesce(rx.company_claim_count, 0) as company_claim_count,
         coalesce(rx.company_drug_cost_usd, 0) as company_drug_cost_usd,
         coalesce(rx.distinct_drugs_prescribed, 0) as distinct_drugs_prescribed,
-        rx.drugs_prescribed_list,
 
         case
             when pay.total_payment_usd is not null

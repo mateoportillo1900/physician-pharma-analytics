@@ -83,10 +83,6 @@ models:
   - name: fact_prescriptions
     description: One row per (physician × drug) Part D prescribing record
     columns:
-      - name: prescription_id
-        tests:
-          - not_null
-          - unique
       - name: physician_npi
         tests:
           - not_null

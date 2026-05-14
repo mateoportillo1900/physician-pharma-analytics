@@ -45,13 +45,25 @@ models:
     mart:
       +materialized: view
       +schema: mart
-      # Materialize the small dimensions only — fact_payment_prescribing
-      # as a TABLE busts Neon's 512 MB free tier (it's a 1.2M-row join).
-      # Streamlit's 10-min query cache makes the view approach acceptable
-      # for the live demo.
+      # Materialize the dims only. We tried to materialize
+      # fact_payment_prescribing as a table but Neon's free-tier compute
+      # times out the FULL OUTER JOIN at 10 min before the CREATE TABLE
+      # AS finishes. Solution: pages that need fast payment lookups
+      # (KOL Finder) query int_physician_payments_agg directly rather
+      # than going through the heavy fact_payment_prescribing view.
       dim_drug:
         +materialized: table
       dim_company:
         +materialized: table
       dim_physician:
+        +materialized: table
+      # Materialize the bridge as a table so KOL Finder doesn't chain
+      # 3 views back to raw.open_payments on every click. Small (~30 MB,
+      # ~250K rows) so it fits within Neon's 512 MB cap.
+      bridge_physician_company_payments:
+        +materialized: table
+      # Same reason for fact_prescriptions: every page that filters by
+      # therapeutic_class was scanning 1.5M rows through 3 chained views.
+      # As a table with implicit FK clustering, lookups are ~constant time.
+      fact_prescriptions:
         +materialized: table

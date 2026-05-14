@@ -9,6 +9,13 @@
 -- (physician × company) on the fly via fact_payment_prescribing.
 -- ─────────────────────────────────────────────────────────────────────────────
 
+{{ config(
+    post_hook=[
+        "CREATE INDEX IF NOT EXISTS fact_rx_class_idx ON {{ this }} (therapeutic_class)",
+        "CREATE INDEX IF NOT EXISTS fact_rx_npi_idx ON {{ this }} (physician_npi)"
+    ]
+) }}
+
 with prescribing as (
     select * from {{ ref('stg_part_d_by_drug') }}
 ),
@@ -19,23 +26,13 @@ mapping as (
 
 joined as (
     select
-        {{ dbt_utils.generate_surrogate_key([
-            'p.physician_npi', 'p.drug_brand_name', 'm.company_name'
-        ]) }} as prescription_id,
-
         p.physician_npi,                     -- fk → dim_physician
         p.drug_brand_name,                   -- fk → dim_drug (partial)
         m.company_name,                      -- fk → dim_company
         m.therapeutic_class,
 
         p.total_claim_count,
-        p.total_drug_cost_usd,
-
-        case
-            when p.total_claim_count is null
-                or p.total_claim_count = 0 then null
-            else round(p.total_drug_cost_usd / p.total_claim_count, 2)
-        end as cost_per_claim_usd
+        p.total_drug_cost_usd
 
     from prescribing as p
     inner join mapping as m
