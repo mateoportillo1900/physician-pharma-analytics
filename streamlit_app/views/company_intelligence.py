@@ -17,9 +17,17 @@ import streamlit as st
 from utils.charts import bar_chart, choropleth_us, donut_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, page_guide, section_heading
+from utils.styles import (
+    apply_global_styles,
+    hero,
+    page_guide,
+    section_heading,
+    view_banner,
+)
 
 apply_global_styles()
+
+view_banner("company", label="Company Intelligence")
 
 hero(
     title="Company Intelligence",

@@ -21,9 +21,12 @@ from utils.styles import (
     hero,
     page_guide,
     section_heading,
+    view_banner,
 )
 
 apply_global_styles()
+
+view_banner("kol_finder", label="KOL Finder")
 
 hero(
     title="KOL Finder",

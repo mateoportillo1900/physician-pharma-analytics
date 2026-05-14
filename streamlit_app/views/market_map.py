@@ -16,9 +16,17 @@ import streamlit as st
 from utils.charts import choropleth_us
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, page_guide, section_heading
+from utils.styles import (
+    apply_global_styles,
+    hero,
+    page_guide,
+    section_heading,
+    view_banner,
+)
 
 apply_global_styles()
+
+view_banner("market_map", label="Market Opportunity Map")
 
 hero(
     title="Market Opportunity Map",

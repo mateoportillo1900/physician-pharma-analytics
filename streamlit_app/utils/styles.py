@@ -17,6 +17,35 @@ import streamlit as st
 # st.set_page_config call. Change here, propagates everywhere.
 PAGE_ICON = "📊"
 APP_NAME = "Pharma Analytics"
+GITHUB_URL = "https://github.com/mateoportillo1900/physician-pharma-analytics"
+LINKEDIN_URL = "https://www.linkedin.com/in/mateoportillo/"
+
+# ── View header banner images ────────────────────────────────────────────────
+# Unsplash-hosted, neutral / on-brand. Each view gets its own thematic
+# image so pages feel distinct. URLs use Unsplash's image-resize API so we
+# never pull a full-resolution file (~50 KB each).
+VIEW_IMAGES = {
+    "dashboard": (
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71"
+        "?auto=format&fit=crop&w=1400&h=300&q=80"  # analytics dashboard
+    ),
+    "kol_finder": (
+        "https://images.unsplash.com/photo-1576091160550-2173dba999ef"
+        "?auto=format&fit=crop&w=1400&h=300&q=80"  # physicians collaborating
+    ),
+    "company": (
+        "https://images.unsplash.com/photo-1631549916768-4119b2e5f926"
+        "?auto=format&fit=crop&w=1400&h=300&q=80"  # pharmaceutical lab
+    ),
+    "payment_rx": (
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f"
+        "?auto=format&fit=crop&w=1400&h=300&q=80"  # data analysis charts
+    ),
+    "market_map": (
+        "https://images.unsplash.com/photo-1524661135-423995f22d0b"
+        "?auto=format&fit=crop&w=1400&h=300&q=80"  # US map / geography
+    ),
+}
 
 
 # ── Color palette ────────────────────────────────────────────────────────────
@@ -128,7 +157,28 @@ section[data-testid="stSidebar"] a {
     color: #94A3B8 !important;
     font-size: 0.78rem;
     line-height: 1.4;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.6rem;
+}
+
+/* Prominent GitHub button in the sidebar */
+a.sidebar-github {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.06);
+    color: #F8FAFC !important;
+    text-decoration: none !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.10);
+    transition: background 0.15s, border-color 0.15s;
+    margin-top: 0.2rem;
+}
+a.sidebar-github:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
 }
 
 /* Sidebar section label (uppercase mini-heading like "VIEWS" / "SOURCES") */
@@ -416,6 +466,109 @@ div[data-testid="stPlotlyChart"] {
 }
 .chart-intro b { color: #1E3A8A; }
 
+/* ── View header banner image (top of each page) ─────────────────────────── */
+.view-banner {
+    width: 100%;
+    height: 140px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    background-color: #1E3A8A;
+    margin-bottom: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.12);
+}
+.view-banner::after {
+    /* Subtle gradient overlay for visual coherence with the rest of the app */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(15,23,42,0.65) 0%,
+        rgba(30,58,138,0.35) 60%,
+        rgba(0,0,0,0.05) 100%
+    );
+}
+.view-banner-label {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.25rem;
+    z-index: 2;
+    color: #FFFFFF;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: rgba(245,158,11,0.85);
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+/* ── Portfolio context card (dashboard) ─────────────────────────────────── */
+.portfolio-context {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-left: 4px solid #F59E0B;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.portfolio-context-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #F59E0B;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.portfolio-context-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0;
+}
+.portfolio-context-body {
+    color: #334155;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+.portfolio-cta-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+}
+.portfolio-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0F172A;
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: background 0.15s, transform 0.15s;
+}
+.portfolio-cta:hover {
+    background: #1E3A8A;
+    transform: translateY(-1px);
+}
+.portfolio-cta.muted {
+    background: #FFFFFF;
+    color: #1E3A8A !important;
+    border: 1px solid #CBD5E1;
+}
+.portfolio-cta.muted:hover {
+    border-color: #1E3A8A;
+    background: #F1F5F9;
+}
+
 /* ── Page guidance callout — "What you're looking at" ───────────────────── */
 .page-guide {
     background: linear-gradient(180deg, #F1F5F9 0%, #FFFFFF 100%);
@@ -566,6 +719,76 @@ def chart_intro(body: str) -> None:
     Supports **bold** markdown. Place immediately before the chart.
     """
     html = f'<div class="chart-intro">{_md_bold_to_html(body)}</div>'
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def view_banner(image_key: str, label: str | None = None) -> None:
+    """Render the per-view header banner image.
+
+    Args:
+        image_key: key into VIEW_IMAGES dict
+            ("dashboard", "kol_finder", "company", "payment_rx", "market_map")
+        label: small pill label overlaid on the image (e.g. "KOL FINDER")
+    """
+    image_url = VIEW_IMAGES.get(image_key)
+    if not image_url:
+        return  # silent fallback — gradient bg behind the banner remains
+
+    label_html = f'<div class="view-banner-label">{label}</div>' if label else ""
+    html = (
+        f'<div class="view-banner" '
+        f"style=\"background-image: url('{image_url}');\">"
+        f"{label_html}"
+        f"</div>"
+    )
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def portfolio_context() -> None:
+    """Render the "About this portfolio project" card on the dashboard.
+
+    Single-purpose function with the project context hard-coded — this is
+    portfolio metadata, not user data, so no parameters needed.
+    """
+    html = (
+        '<div class="portfolio-context">'
+        '<div class="portfolio-context-tag">Portfolio Project · 2026</div>'
+        '<div class="portfolio-context-title">'
+        "About this project"
+        "</div>"
+        '<div class="portfolio-context-body">'
+        "Built by <strong>Mateo Portillo</strong> as a portfolio piece "
+        "demonstrating end-to-end pharma commercial-analytics tradecraft on "
+        "real federal data. The project joins two publicly available CMS "
+        "datasets (Open Payments + Medicare Part D) through a "
+        "<strong>star-schema data warehouse</strong> built with dbt, "
+        "surfaces five business-led analytic views in Streamlit, and adds "
+        "an <strong>AI-augmented &ldquo;Explain this chart&rdquo;</strong> "
+        "feature powered by Groq&rsquo;s Llama 3.3 70B. The same analyses "
+        "are the foundation of every pharma commercial team at ZS Associates, "
+        "IQVIA, AbbVie, and Tempus AI."
+        "</div>"
+        '<div class="portfolio-cta-row">'
+        f'<a class="portfolio-cta" href="{GITHUB_URL}" target="_blank" '
+        'rel="noopener">'
+        '<svg width="14" height="14" viewBox="0 0 16 16" fill="white" '
+        'xmlns="http://www.w3.org/2000/svg">'
+        '<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-'
+        "17.55-.38v-1.32c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.18-.89"
+        "-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.87 "
+        "2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-"
+        "1.58.82-2.14-.08-.2-.36-1.01.08-2.1 0 0 .67-.21 2.2.82.64-.18 1.32-"
+        ".27 2-.27s1.36.09 2 .27c1.53-1.03 2.2-.82 2.2-.82.44 1.09.16 1.9.08 "
+        "2.1.51.56.82 1.27.82 2.14 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73."
+        "54 1.48v2.19c0 .21.15.46.55.38C13.71 14.53 16 11.54 16 8c0-4.42-"
+        '3.58-8-8-8z"/></svg>'
+        "View on GitHub"
+        "</a>"
+        f'<a class="portfolio-cta muted" href="{LINKEDIN_URL}" '
+        'target="_blank" rel="noopener">Connect on LinkedIn</a>'
+        "</div>"
+        "</div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 
