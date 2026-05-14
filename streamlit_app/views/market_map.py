@@ -16,7 +16,7 @@ import streamlit as st
 from utils.charts import choropleth_us
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, page_guide, section_heading
 
 apply_global_styles()
 
@@ -25,6 +25,20 @@ hero(
     subtitle=(
         "Where is pharma over- or under-invested vs. actual Part D "
         "prescribing volume? Spot growth markets and saturation risks."
+    ),
+)
+
+page_guide(
+    title="How to use this view",
+    body=(
+        "The map colors each state by its **investment ratio** — "
+        "payment share of national pharma spend ÷ Rx share of national "
+        "prescribing volume. **Red states** are over-invested "
+        "(>1.25× — pharma spends more here than prescribing volume "
+        "justifies). **Blue states** are under-invested (<0.75× — "
+        "possible coverage gaps). **White states** are balanced. "
+        "Filter by company to see one manufacturer's territory pattern. "
+        "Useful for **rep deployment planning** and **KOL gap analysis**."
     ),
 )
 

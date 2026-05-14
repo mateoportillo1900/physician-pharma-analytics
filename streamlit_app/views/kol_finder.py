@@ -16,7 +16,7 @@ import streamlit as st
 from utils.charts import scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, chart_intro, hero, page_guide, section_heading
 
 apply_global_styles()
 
@@ -25,6 +25,19 @@ hero(
     subtitle=(
         "Highest-volume Part D prescribers in any therapeutic class, with "
         "their pharma payment relationships overlaid."
+    ),
+)
+
+page_guide(
+    title="How to use this view",
+    body=(
+        "Pick a therapeutic class to surface the top prescribers in that "
+        "category. These are the physicians pharma commercial teams refer "
+        "to as **KOLs (Key Opinion Leaders)** — typically the top 1-5% of "
+        "prescribers by volume. **What to look for**: which KOLs already "
+        "have payment relationships (the **Paid** column), and whether "
+        "any high-volume prescribers are *unpaid* — those are the "
+        "highest-value uncultivated targets."
     ),
 )
 

@@ -103,16 +103,56 @@ section[data-testid="stSidebar"] h3 {
     color: #F8FAFC !important;
 }
 section[data-testid="stSidebar"] a {
-    color: #60A5FA !important;
+    color: #93C5FD !important;
+    text-decoration: none !important;
 }
-/* sidebar nav links */
-section[data-testid="stSidebarNav"] a {
+
+/* Sidebar branding block */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.5rem 0 0.25rem 0;
+}
+.sidebar-brand-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+.sidebar-brand-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #F8FAFC !important;
+    letter-spacing: -0.01em;
+}
+.sidebar-tagline {
+    color: #94A3B8 !important;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+/* Sidebar section label (uppercase mini-heading like "VIEWS" / "SOURCES") */
+.sidebar-nav-label {
+    color: #64748B !important;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+/* st.page_link styling — highlight the current page */
+section[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"] {
     padding: 0.5rem 0.75rem;
-    border-radius: 6px;
+    border-radius: 8px;
+    margin: 1px 0;
     transition: background 0.15s;
+    color: #CBD5E1 !important;
+    font-weight: 500;
 }
-section[data-testid="stSidebarNav"] a:hover {
+section[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"]:hover {
     background: rgba(255,255,255,0.05);
+    color: #F8FAFC !important;
 }
 
 /* ── KPI cards (st.metric) ───────────────────────────────────────────────── */
@@ -242,6 +282,148 @@ div[data-testid="stPlotlyChart"] {
     margin-bottom: 0.5rem;
 }
 
+/* ── Hero card with gradient background ─────────────────────────────────── */
+.hero-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 55%, #6D28D9 100%);
+    border-radius: 16px;
+    padding: 2rem 2.25rem 1.75rem 2.25rem;
+    margin-bottom: 1.5rem;
+    color: #F8FAFC;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.18);
+    position: relative;
+    overflow: hidden;
+}
+.hero-card::before {
+    /* Decorative geometric pattern in the corner */
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+.hero-card-tag {
+    display: inline-block;
+    background: rgba(245,158,11,0.18);
+    color: #FBBF24;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+}
+.hero-card-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: #F8FAFC !important;
+    margin: 0 0 0.6rem 0;
+}
+.hero-card-title .accent {
+    background: linear-gradient(90deg, #FBBF24, #F472B6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-card-sub {
+    color: #CBD5E1;
+    font-size: 1rem;
+    line-height: 1.55;
+    max-width: 760px;
+    margin: 0 0 1.25rem 0;
+}
+.hero-card-sub strong { color: #FBBF24; font-weight: 700; }
+
+/* KPI strip inside the hero */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.hero-stat { padding: 0.4rem 0; }
+.hero-stat-value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #F8FAFC;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+.hero-stat-label {
+    color: #94A3B8;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.15rem;
+}
+
+/* Tech pills row */
+.hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+}
+.hero-pill {
+    background: rgba(255,255,255,0.08);
+    color: #E2E8F0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+/* ── Chart-level intro block: explains what + what to look for ───────────── */
+.chart-intro {
+    background: #F8FAFC;
+    border-left: 3px solid #1E3A8A;
+    border-radius: 4px;
+    padding: 0.7rem 0.9rem;
+    margin: 0.2rem 0 0.8rem 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #334155;
+}
+.chart-intro b { color: #1E3A8A; }
+
+/* ── Page guidance callout — "What you're looking at" ───────────────────── */
+.page-guide {
+    background: linear-gradient(180deg, #F1F5F9 0%, #FFFFFF 100%);
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.page-guide-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1E3A8A;
+    margin-bottom: 0.5rem;
+}
+.page-guide-title::before {
+    content: "→";
+    color: #F59E0B;
+    font-weight: 700;
+}
+.page-guide-body {
+    color: #334155;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+.page-guide-body strong { color: #0F172A; }
+
 </style>
 """
 
@@ -272,7 +454,10 @@ def _md_bold_to_html(text: str) -> str:
 
 
 def hero(title: str, subtitle: str, meta: str | None = None) -> None:
-    """Render the consistent hero section at the top of each page."""
+    """Render the consistent (plain) hero section at the top of a sub-page.
+
+    For the Executive Dashboard's gradient hero card, use `hero_card`.
+    """
     st.markdown(f"# {title}")
     st.markdown(
         f'<div class="app-hero-sub">{_md_bold_to_html(subtitle)}</div>',
@@ -288,6 +473,73 @@ def hero(title: str, subtitle: str, meta: str | None = None) -> None:
             '<div style="margin-bottom: 1.5rem"></div>',
             unsafe_allow_html=True,
         )
+
+
+def hero_card(
+    tag: str,
+    title_lead: str,
+    title_accent: str,
+    subtitle: str,
+    stats: list[tuple[str, str]],
+    pills: list[str] | None = None,
+) -> None:
+    """Render the gradient hero card for the dashboard landing.
+
+    Args:
+        tag: small uppercase pill label (e.g. "COMMERCIAL ANALYTICS")
+        title_lead: white portion of the title (e.g. "Physician × Pharma")
+        title_accent: gradient-colored portion (e.g. "Analytics")
+        subtitle: one-sentence description (supports **bold**)
+        stats: list of (value, label) tuples shown in the KPI strip
+        pills: optional list of tech-pill strings (e.g. ["Postgres · dbt"])
+    """
+    stats_html = "".join(
+        f'<div class="hero-stat">'
+        f'<div class="hero-stat-value">{val}</div>'
+        f'<div class="hero-stat-label">{lab}</div>'
+        f"</div>"
+        for val, lab in stats
+    )
+    pills_html = ""
+    if pills:
+        pill_items = "".join(f'<span class="hero-pill">{p}</span>' for p in pills)
+        pills_html = f'<div class="hero-pills">{pill_items}</div>'
+
+    html = (
+        f'<div class="hero-card">'
+        f'<div class="hero-card-tag">{tag}</div>'
+        f'<div class="hero-card-title">{title_lead} '
+        f'<span class="accent">{title_accent}</span></div>'
+        f'<div class="hero-card-sub">{_md_bold_to_html(subtitle)}</div>'
+        f'<div class="hero-stats">{stats_html}</div>'
+        f"{pills_html}"
+        f"</div>"
+    )
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def page_guide(title: str, body: str) -> None:
+    """Render a "What you're looking at / How to use" callout near the top
+    of a sub-page. Title is uppercase, body supports **bold** markdown.
+    """
+    html = (
+        '<div class="page-guide">'
+        f'<div class="page-guide-title">{title}</div>'
+        f'<div class="page-guide-body">{_md_bold_to_html(body)}</div>'
+        "</div>"
+    )
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def chart_intro(body: str) -> None:
+    """Render a small intro / interpretation hint above a chart.
+
+    Supports **bold** markdown. Place immediately before the chart.
+    """
+    html = (
+        f'<div class="chart-intro">{_md_bold_to_html(body)}</div>'
+    )
+    st.markdown(html, unsafe_allow_html=True)
 
 
 PAGE_CARD_CSS = """

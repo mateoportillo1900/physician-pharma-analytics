@@ -16,7 +16,7 @@ import streamlit as st
 from utils.charts import bar_chart, scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, page_guide, section_heading
 
 apply_global_styles()
 
@@ -25,6 +25,20 @@ hero(
     subtitle=(
         "Do paid physicians prescribe more of a company's drugs? "
         "The published research question, controlled for specialty."
+    ),
+)
+
+page_guide(
+    title="How to use this view",
+    body=(
+        "Pick a company and a specialty. The KPI strip and bar chart "
+        "compare mean prescribing volume between **paid** and **unpaid** "
+        "physicians **within the same specialty** — that's the proper "
+        "comparison (a cardiologist prescribes more cardiac drugs than a "
+        "dermatologist regardless of payments). **What to look for**: a "
+        "**lift ratio > 1.5×** is a strong association. The scatter plot "
+        "below shows whether higher payments correlate with higher "
+        "prescribing volume among paid physicians (Pearson r)."
     ),
 )
 

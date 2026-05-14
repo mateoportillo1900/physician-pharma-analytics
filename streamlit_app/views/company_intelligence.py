@@ -17,7 +17,7 @@ import streamlit as st
 from utils.charts import bar_chart, choropleth_us, donut_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, hero, section_heading
+from utils.styles import apply_global_styles, hero, page_guide, section_heading
 
 apply_global_styles()
 
@@ -26,6 +26,18 @@ hero(
     subtitle=(
         "A single manufacturer's 2022 commercial footprint — specialty "
         "mix, payment types, geography, and top paid physicians."
+    ),
+)
+
+page_guide(
+    title="How to use this view",
+    body=(
+        "Select any of the tracked manufacturers (Pfizer, AbbVie, etc.) to "
+        "see their entire 2022 commercial-engagement footprint in one place. "
+        "**What to look for**: how concentrated is their spend "
+        "(broad-and-shallow vs. focused-on-KOLs)? Does their specialty mix "
+        "match their drug portfolio? Which states do they over-invest in? "
+        "Useful for competitive intelligence and territory benchmarking."
     ),
 )
 
