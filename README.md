@@ -55,12 +55,13 @@ in-house brand analytics team builds variations of it.
 │   │   └── mart/                 # Star schema: facts + dimensions
 │   ├── analyses/                 # 5 showcase SQL analyses (see below)
 │   └── seeds/                    # Curated drug→manufacturer mapping
-├── streamlit_app/                # 5-page interactive dashboard
-│   ├── app.py                    # Executive dashboard (entry point)
-│   ├── pages/                    # KOL Finder, Company, Payment vs Rx, Market
-│   └── utils/                    # DB + LLM helpers
+├── streamlit_app/                # 6-page interactive dashboard
+│   ├── app.py                    # Navigation hub + sidebar (st.navigation entry point)
+│   ├── views/                    # Dashboard, KOL Finder, Company, Payment-Rx, Market, About
+│   └── utils/                    # styles + charts + DB + LLM helpers
 ├── scripts/                      # Data download + load pipeline
-└── .github/workflows/            # CI: ruff + dbt parse/compile
+├── .github/workflows/            # CI: ruff (format + lint) + dbt parse
+└── .pre-commit-config.yaml       # Auto-format on every git commit
 ```
 
 ---
@@ -88,8 +89,9 @@ demonstration of advanced SQL across a realistic business question.
 | Transformations | **dbt Core** + `dbt-postgres` | Industry standard for analytics engineering. Lineage, testing, docs built-in |
 | App framework | **Streamlit** + Plotly | Fast to build, free Streamlit Cloud deployment |
 | LLM ("Explain This Chart") | **Groq** Llama 3.3 70B | Free tier with generous limits, sub-second inference |
-| CI | **GitHub Actions** | Free for public repos. Runs Ruff + `dbt parse` on every push |
+| CI | **GitHub Actions** | Free for public repos. Runs Ruff format + lint + `dbt parse` on every push |
 | Data quality | `dbt-utils`, `dbt-expectations` | Generic + Great-Expectations-style tests |
+| Local hygiene | **pre-commit** (Ruff hook) | Auto-formats Python on every `git commit`, so CI can't fail on style |
 
 ---
 
@@ -119,7 +121,8 @@ See `scripts/config.py` for the exact filter parameters.
 ## Getting Started
 
 ### Prerequisites
-- Python 3.10+
+- **Python 3.12** specifically (dbt-core's `mashumaro` dependency has
+  issues on Python 3.13+; older `pydantic` versions don't work on 3.10)
 - A free [Neon](https://neon.tech) Postgres database
 - A free [Groq](https://console.groq.com) API key (for the LLM feature)
 
@@ -127,35 +130,38 @@ See `scripts/config.py` for the exact filter parameters.
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/physician-pharma-analytics.git
+git clone https://github.com/mateoportillo1900/physician-pharma-analytics.git
 cd physician-pharma-analytics
 
-# 2. Create a virtual env and install dependencies
-python -m venv .venv
-.venv\Scripts\activate         # Windows
-# source .venv/bin/activate      # macOS / Linux
+# 2. Create a Python 3.12 virtual env and install dependencies
+py -3.12 -m venv .venv          # Windows; use `python3.12` on macOS / Linux
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
 pip install -r requirements.txt
 
-# 3. Configure secrets
+# 3. Install the pre-commit hook (so commits auto-format)
+pre-commit install
+
+# 4. Configure secrets
 cp .env.example .env
 # Edit .env and fill in DATABASE_URL, NEON_HOST, NEON_USER, NEON_PASSWORD,
 # NEON_DBNAME, and GROQ_API_KEY
 
-# 4. Download CMS data (~3.5 GB total; takes 10-30 min depending on bandwidth)
+# 5. Download CMS data (~5 GB total; takes 10-30 min depending on bandwidth)
 python scripts/download_data.py
 
-# 5. Filter and load into Neon (~5 min)
+# 6. Filter and load into Neon (~5 min)
 python scripts/load_data.py
 
-# 6. Build the dbt warehouse
+# 7. Build the dbt warehouse
 cd dbt_project
-dbt deps                       # install dbt packages
-dbt seed --profiles-dir .      # load the drug→company mapping
-dbt run --profiles-dir .       # build all models
-dbt test --profiles-dir .      # run all data-quality tests
+dbt deps                          # install dbt packages
+dbt seed --profiles-dir .         # load the drug→company mapping
+dbt run --profiles-dir .          # build all models
+dbt test --profiles-dir .         # run all 59 data-quality tests
 cd ..
 
-# 7. Run the Streamlit app
+# 8. Run the Streamlit app
 streamlit run streamlit_app/app.py
 ```
 
