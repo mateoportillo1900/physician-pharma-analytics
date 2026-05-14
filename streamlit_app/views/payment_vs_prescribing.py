@@ -53,12 +53,20 @@ st.info(
 # ─── Filters ─────────────────────────────────────────────────────────────────
 section_heading("Filters")
 
-companies = run_query("""
-    SELECT DISTINCT company_name
-    FROM raw_mart.fact_payment_prescribing
-    WHERE total_payment_usd > 0 AND company_claim_count > 0
-    ORDER BY company_name
-""")["company_name"].tolist()
+companies_df = run_query("""
+    SELECT DISTINCT
+        fpp.company_name,
+        COALESCE(dc.company_display_name, fpp.company_name) AS display_name
+    FROM raw_mart.fact_payment_prescribing AS fpp
+    LEFT JOIN raw_mart.dim_company AS dc USING (company_name)
+    WHERE fpp.total_payment_usd > 0 AND fpp.company_claim_count > 0
+    ORDER BY display_name
+""")
+# Map display name → canonical join key
+_display_to_canonical = dict(
+    zip(companies_df["display_name"], companies_df["company_name"], strict=False)
+)
+companies = companies_df["display_name"].tolist()
 
 specialties = run_query("""
     SELECT DISTINCT specialty
@@ -69,7 +77,8 @@ specialties = run_query("""
 
 c1, c2 = st.columns(2)
 with c1:
-    selected_company = st.selectbox("Company", companies)
+    selected_display = st.selectbox("Company", companies)
+    selected_company = _display_to_canonical[selected_display]
 with c2:
     selected_specialty = st.selectbox(
         "Specialty",
@@ -128,7 +137,7 @@ except (IndexError, ZeroDivisionError):
 
 
 # ─── KPIs ────────────────────────────────────────────────────────────────────
-section_heading(f"{selected_company} — {selected_specialty}")
+section_heading(f"{selected_display} — {selected_specialty}")
 
 c1, c2, c3, c4 = st.columns(4)
 
@@ -160,15 +169,15 @@ fig.update_layout(showlegend=False)
 st.plotly_chart(fig, use_container_width=True)
 
 render_explain_button(
-    chart_title=f"{selected_company} Paid vs Unpaid Comparison",
+    chart_title=f"{selected_display} Paid vs Unpaid Comparison",
     business_question=(
-        f"For {selected_company}'s drugs, how does prescribing volume "
+        f"For {selected_display}'s drugs, how does prescribing volume "
         f"compare between physicians who received payments and those who "
         f"didn't, within the same specialty?"
     ),
     data=summary_df,
     extra_context=(
-        f"Company: {selected_company}\n"
+        f"Company: {selected_display}\n"
         f"Specialty: {selected_specialty}\n"
         f"Lift ratio: {lift}× (paid vs unpaid)"
     ),
@@ -203,7 +212,7 @@ if not scatter_df.empty and len(scatter_df) >= 10:
         x="total_payment_usd",
         y="company_claim_count",
         title=(
-            f"Payments vs. Claims — {selected_company} "
+            f"Payments vs. Claims — {selected_display} "
             f"(r = {pearson:.3f}, n = {len(scatter_df):,})"
         ),
         color="specialty" if selected_specialty == "All specialties" else None,
@@ -216,9 +225,9 @@ if not scatter_df.empty and len(scatter_df) >= 10:
     st.plotly_chart(fig, use_container_width=True)
 
     render_explain_button(
-        chart_title=f"{selected_company} Payment-Prescribing Scatter",
+        chart_title=f"{selected_display} Payment-Prescribing Scatter",
         business_question=(
-            f"Among physicians who receive payments from {selected_company}, "
+            f"Among physicians who receive payments from {selected_display}, "
             f"is there a relationship between payment size and prescribing "
             f"volume? What's the Pearson correlation telling us?"
         ),

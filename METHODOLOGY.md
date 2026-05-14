@@ -31,6 +31,34 @@ defensibility for any audience.
 
 ---
 
+## 0b. Known Data Quirks
+
+### Why does Bristol Myers Squibb appear small?
+
+BMS shows only ~$2.3M of 2022 spend in this dataset (combined with its
+Celgene subsidiary). That is dramatically lower than peers like Pfizer
+($253M) or AbbVie ($115M), and lower than you'd expect from a top-5
+pharma manufacturer. **This reflects how BMS reports under the Sunshine
+Act, not a bug in this project:**
+
+- **Eliquis** (BMS's largest revenue product) is co-marketed with Pfizer.
+  Most of the Eliquis-related general payments are reported by Pfizer
+  as the paying entity, not BMS — so they appear under Pfizer here.
+- BMS's substantial **Research Payments** (clinical trial-related)
+  are reported in a separate category that this project intentionally
+  excludes (we use General Payments only — see § 1.1).
+- The **$50 minimum payment filter** drops small-value meal events
+  which would have padded the count without changing the headline
+  story (see § 1).
+
+If you needed an accurate BMS total spend including research, you'd
+load Open Payments' Research Payments file and re-aggregate. We don't,
+because this project is about commercial / promotional engagement
+(the General Payments bucket), where BMS legitimately is a smaller
+spender than its drug revenue would suggest.
+
+---
+
 ## 1. Data Sources
 
 ### 1.1 CMS Open Payments (General Payments) — 2022

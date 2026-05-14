@@ -36,7 +36,9 @@ cleaned as (
                 or upper(trim(company_name)) like 'JANSSEN%' then 'JOHNSON & JOHNSON'
             when upper(trim(company_name)) like 'NOVO NORDISK%' then 'NOVO NORDISK'
             when upper(trim(company_name)) like 'MERCK%' then 'MERCK'
-            when upper(trim(company_name)) like 'BRISTOL%MYERS%' then 'BRISTOL-MYERS SQUIBB'
+            when upper(trim(company_name)) like 'BRISTOL%MYERS%'
+                or upper(trim(company_name)) like 'CELGENE%'  -- BMS oncology subsidiary
+                then 'BRISTOL-MYERS SQUIBB'
             when upper(trim(company_name)) like 'ELI LILLY%'
                 or upper(trim(company_name)) like 'LILLY%' then 'ELI LILLY'
             when upper(trim(company_name)) like 'ASTRAZENECA%' then 'ASTRAZENECA'

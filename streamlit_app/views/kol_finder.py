@@ -115,7 +115,15 @@ query = f"""
     FROM class_volume AS cv
     JOIN raw_mart.dim_physician AS dp USING (physician_npi)
     LEFT JOIN payments_for_class AS p ON cv.physician_npi = p.physician_npi
-    WHERE TRUE
+    -- KOLs are MD/DO specialists. Exclude mid-level providers
+    -- (Nurse Practitioner, Physician Assistant) and physicians with
+    -- no specialty on file — they're not the targets of pharma
+    -- commercial engagement and skew the rankings.
+    WHERE dp.specialty NOT IN (
+            'Nurse Practitioner',
+            'Physician Assistant',
+            'Unknown'
+        )
         {payment_filter_sql}
         {state_filter_sql}
     ORDER BY cv.class_claims DESC

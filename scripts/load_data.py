@@ -160,7 +160,8 @@ def load_open_payments(conn: psycopg.Connection) -> int:
         chunk = chunk.rename(columns=use_cols)
 
         # Filter to top 10 tracked companies (alias matching matches the
-        # SQL canonicalization in stg_open_payments.sql)
+        # SQL canonicalization in stg_open_payments.sql). Subsidiaries
+        # roll up to parent: Janssen → J&J, Celgene → BMS.
         company_upper = chunk["company_name"].fillna("").str.upper()
         keep_mask = (
             company_upper.str.startswith("PFIZER")
@@ -170,6 +171,7 @@ def load_open_payments(conn: psycopg.Connection) -> int:
             | company_upper.str.startswith("NOVO NORDISK")
             | company_upper.str.startswith("MERCK")
             | company_upper.str.startswith("BRISTOL")
+            | company_upper.str.startswith("CELGENE")
             | company_upper.str.startswith("ELI LILLY")
             | company_upper.str.startswith("LILLY")
             | company_upper.str.startswith("ASTRAZENECA")

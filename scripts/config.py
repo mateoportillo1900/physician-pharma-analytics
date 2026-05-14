@@ -45,12 +45,17 @@ PART_D_PROVIDER_DRUG_URL = (
 # Open Payments: keep only payments from these companies.
 # Top 10 by 2022 spend — these alone account for ~60% of total industry
 # physician spend and cover all therapeutic classes in our drug seed.
+#
+# Subsidiary handling: the corresponding load_data.py filter and the
+# stg_open_payments.sql canonicalization step roll specific subsidiaries
+# (e.g. Celgene → BRISTOL-MYERS SQUIBB) into the parent name so the
+# dimension table doesn't fragment the entity.
 TRACKED_COMPANIES = [
     "ABBVIE",
     "PFIZER",
     "JOHNSON & JOHNSON",
     "MERCK",
-    "BRISTOL-MYERS SQUIBB",
+    "BRISTOL-MYERS SQUIBB",  # also rolls up Celgene (oncology, acquired 2019)
     "ELI LILLY",
     "NOVO NORDISK",
     "ASTRAZENECA",

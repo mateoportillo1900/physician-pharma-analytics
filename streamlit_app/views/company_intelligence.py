@@ -46,14 +46,16 @@ section_heading("Select Company")
 
 companies = run_query("""
     SELECT
-        company_name,
-        ROUND(SUM(payment_amount_usd)::numeric / 1e6, 1) AS total_m
-    FROM raw_mart.fact_payments
-    GROUP BY company_name
+        fp.company_name,
+        COALESCE(dc.company_display_name, fp.company_name) AS display_name,
+        ROUND(SUM(fp.payment_amount_usd)::numeric / 1e6, 1) AS total_m
+    FROM raw_mart.fact_payments AS fp
+    LEFT JOIN raw_mart.dim_company AS dc USING (company_name)
+    GROUP BY fp.company_name, dc.company_display_name
     ORDER BY total_m DESC
 """)
 companies["label"] = (
-    companies["company_name"] + " ($" + companies["total_m"].astype(str) + "M)"
+    companies["display_name"] + " ($" + companies["total_m"].astype(str) + "M)"
 )
 
 selected_label = st.selectbox(
@@ -62,10 +64,13 @@ selected_label = st.selectbox(
 selected_company = companies.loc[
     companies["label"] == selected_label, "company_name"
 ].iloc[0]
+selected_display = companies.loc[
+    companies["label"] == selected_label, "display_name"
+].iloc[0]
 
 
 # ─── KPI strip ───────────────────────────────────────────────────────────────
-section_heading(f"{selected_company} — At a Glance")
+section_heading(f"{selected_display} — At a Glance")
 
 kpis = run_query(
     """
@@ -119,9 +124,9 @@ with col1:
     st.plotly_chart(fig, use_container_width=True)
 
     render_explain_button(
-        chart_title=f"{selected_company} Spend by Specialty",
+        chart_title=f"{selected_display} Spend by Specialty",
         business_question=(
-            f"What does {selected_company}'s 2022 specialty investment mix "
+            f"What does {selected_display}'s 2022 specialty investment mix "
             f"reveal about their therapeutic focus and commercial strategy?"
         ),
         data=spec_df,
@@ -150,9 +155,9 @@ with col2:
     st.plotly_chart(fig, use_container_width=True)
 
     render_explain_button(
-        chart_title=f"{selected_company} Payment Category Mix",
+        chart_title=f"{selected_display} Payment Category Mix",
         business_question=(
-            f"Is {selected_company} primarily paying for speaking, "
+            f"Is {selected_display} primarily paying for speaking, "
             f"consulting, meals, travel, or something else? What does "
             f"that say about their commercial engagement strategy?"
         ),
@@ -189,9 +194,9 @@ fig = choropleth_us(
 st.plotly_chart(fig, use_container_width=True)
 
 render_explain_button(
-    chart_title=f"{selected_company} Geographic Spend",
+    chart_title=f"{selected_display} Geographic Spend",
     business_question=(
-        f"Which states does {selected_company} invest the most in, and "
+        f"Which states does {selected_display} invest the most in, and "
         f"are there concentrations or notable gaps in coverage?"
     ),
     data=geo_df.head(15),
@@ -237,9 +242,9 @@ display_top.columns = [
 st.dataframe(display_top, use_container_width=True, hide_index=True, height=400)
 
 render_explain_button(
-    chart_title=f"{selected_company} Top Physicians",
+    chart_title=f"{selected_display} Top Physicians",
     business_question=(
-        f"Who are {selected_company}'s most-paid physician relationships, "
+        f"Who are {selected_display}'s most-paid physician relationships, "
         f"and what does the concentration look like — is spending broad or "
         f"focused on a small set of high-value KOLs?"
     ),

@@ -54,14 +54,27 @@ st.info(
 # ─── Filter ──────────────────────────────────────────────────────────────────
 section_heading("Filter")
 
-all_companies = run_query(
-    "SELECT DISTINCT company_name FROM raw_mart.fact_payments ORDER BY company_name"
-)["company_name"].tolist()
+companies_df = run_query("""
+    SELECT DISTINCT
+        fp.company_name,
+        COALESCE(dc.company_display_name, fp.company_name) AS display_name
+    FROM raw_mart.fact_payments AS fp
+    LEFT JOIN raw_mart.dim_company AS dc USING (company_name)
+    ORDER BY display_name
+""")
+_display_to_canonical = dict(
+    zip(companies_df["display_name"], companies_df["company_name"], strict=False)
+)
 
-selected = st.selectbox(
+selected_display = st.selectbox(
     "Company view",
-    ["All companies"] + all_companies,
+    ["All companies"] + companies_df["display_name"].tolist(),
     label_visibility="collapsed",
+)
+selected = (
+    "All companies"
+    if selected_display == "All companies"
+    else _display_to_canonical[selected_display]
 )
 
 
@@ -169,7 +182,7 @@ market_df = run_query(
 
 
 # ─── Map ─────────────────────────────────────────────────────────────────────
-section_heading(f"Investment Ratio by State — {selected}")
+section_heading(f"Investment Ratio by State — {selected_display}")
 
 fig = choropleth_us(
     market_df,
@@ -182,9 +195,9 @@ fig.update_coloraxes(cmid=1.0)
 st.plotly_chart(fig, use_container_width=True)
 
 render_explain_button(
-    chart_title=f"{selected} Investment Ratio Map",
+    chart_title=f"{selected_display} Investment Ratio Map",
     business_question=(
-        f"Across U.S. states, where is {selected} over- or under-invested "
+        f"Across U.S. states, where is {selected_display} over- or under-invested "
         f"relative to Part D prescribing volume? What are the obvious "
         f"opportunities and risks?"
     ),
@@ -218,7 +231,7 @@ with col1:
     st.dataframe(display, use_container_width=True, hide_index=True)
 
     render_explain_button(
-        chart_title=f"{selected} Under-Invested Growth Markets",
+        chart_title=f"{selected_display} Under-Invested Growth Markets",
         business_question=(
             "Which states are most under-invested by pharma relative to "
             "their prescribing volume, and what does that suggest for "
@@ -237,7 +250,7 @@ with col2:
     st.dataframe(display, use_container_width=True, hide_index=True)
 
     render_explain_button(
-        chart_title=f"{selected} Over-Invested Saturation Markets",
+        chart_title=f"{selected_display} Over-Invested Saturation Markets",
         business_question=(
             "Which states show signs of pharma over-investment (saturation), "
             "and what risks does that suggest?"

@@ -95,16 +95,17 @@ with col1:
     )
     top_companies = run_query("""
         SELECT
-            company_name,
-            ROUND(SUM(payment_amount_usd)::numeric / 1e6, 2) AS spend_millions
-        FROM raw_mart.fact_payments
-        GROUP BY company_name
+            COALESCE(dc.company_display_name, fp.company_name) AS company,
+            ROUND(SUM(fp.payment_amount_usd)::numeric / 1e6, 2) AS spend_millions
+        FROM raw_mart.fact_payments AS fp
+        LEFT JOIN raw_mart.dim_company AS dc USING (company_name)
+        GROUP BY company
         ORDER BY spend_millions DESC
     """)
     fig = bar_chart(
         top_companies.sort_values("spend_millions"),
         x="spend_millions",
-        y="company_name",
+        y="company",
         title="2022 Spend by Manufacturer ($M)",
         orientation="h",
     )
