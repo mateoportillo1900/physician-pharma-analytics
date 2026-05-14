@@ -15,7 +15,7 @@ on every visualization.
 
 ## 📊 Live Demo
 
-→ **[Open the deployed Streamlit app](https://mateoportillo1900-physician-pharma-anal-streamlit-appapp-ewprks.streamlit.app/)**
+→ **[Open the deployed Streamlit app](https://physician-pharma-analytics.streamlit.app/)**
 
 Six views: Executive Dashboard, KOL Finder, Company Intelligence,
 Payment vs. Prescribing, Market Opportunity Map, and About this project.

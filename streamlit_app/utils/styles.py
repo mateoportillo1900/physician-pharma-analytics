@@ -18,10 +18,7 @@ import streamlit as st
 PAGE_ICON = "📊"
 APP_NAME = "Pharma Analytics"
 GITHUB_URL = "https://github.com/mateoportillo1900/physician-pharma-analytics"
-LIVE_DEMO_URL = (
-    "https://mateoportillo1900-physician-pharma-anal-streamlit-appapp-"
-    "ewprks.streamlit.app/"
-)
+LIVE_DEMO_URL = "https://physician-pharma-analytics.streamlit.app/"
 
 # ── View header banner images ────────────────────────────────────────────────
 # Unsplash-hosted, neutral / on-brand. Each view gets its own thematic
