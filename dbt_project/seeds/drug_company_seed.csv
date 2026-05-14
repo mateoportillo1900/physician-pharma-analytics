@@ -1,0 +1,61 @@
+drug_brand_name,drug_generic_name,manufacturer_canonical,therapeutic_class
+Humira,Adalimumab,ABBVIE,Immunology
+Skyrizi,Risankizumab,ABBVIE,Immunology
+Rinvoq,Upadacitinib,ABBVIE,Immunology
+Imbruvica,Ibrutinib,ABBVIE,Oncology
+Venclexta,Venetoclax,ABBVIE,Oncology
+Opdivo,Nivolumab,BRISTOL-MYERS SQUIBB,Oncology
+Revlimid,Lenalidomide,BRISTOL-MYERS SQUIBB,Oncology
+Pomalyst,Pomalidomide,BRISTOL-MYERS SQUIBB,Oncology
+Keytruda,Pembrolizumab,MERCK,Oncology
+Januvia,Sitagliptin,MERCK,Endocrinology
+Janumet,Sitagliptin / Metformin,MERCK,Endocrinology
+Trulicity,Dulaglutide,ELI LILLY,Endocrinology
+Mounjaro,Tirzepatide,ELI LILLY,Endocrinology
+Verzenio,Abemaciclib,ELI LILLY,Oncology
+Taltz,Ixekizumab,ELI LILLY,Immunology
+Ozempic,Semaglutide,NOVO NORDISK,Endocrinology
+Wegovy,Semaglutide,NOVO NORDISK,Endocrinology
+Rybelsus,Semaglutide,NOVO NORDISK,Endocrinology
+Victoza,Liraglutide,NOVO NORDISK,Endocrinology
+Tresiba,Insulin Degludec,NOVO NORDISK,Endocrinology
+Eliquis,Apixaban,PFIZER,Cardiology
+Ibrance,Palbociclib,PFIZER,Oncology
+Xeljanz,Tofacitinib,PFIZER,Immunology
+Vyndamax,Tafamidis,PFIZER,Cardiology
+Lipitor,Atorvastatin,PFIZER,Cardiology
+Stelara,Ustekinumab,JOHNSON & JOHNSON,Immunology
+Tremfya,Guselkumab,JOHNSON & JOHNSON,Immunology
+Xarelto,Rivaroxaban,JOHNSON & JOHNSON,Cardiology
+Invokana,Canagliflozin,JOHNSON & JOHNSON,Endocrinology
+Darzalex,Daratumumab,JOHNSON & JOHNSON,Oncology
+Tagrisso,Osimertinib,ASTRAZENECA,Oncology
+Farxiga,Dapagliflozin,ASTRAZENECA,Endocrinology
+Brilinta,Ticagrelor,ASTRAZENECA,Cardiology
+Symbicort,Budesonide / Formoterol,ASTRAZENECA,Pulmonology
+Lynparza,Olaparib,ASTRAZENECA,Oncology
+Entresto,Sacubitril / Valsartan,NOVARTIS,Cardiology
+Cosentyx,Secukinumab,NOVARTIS,Immunology
+Kisqali,Ribociclib,NOVARTIS,Oncology
+Gilenya,Fingolimod,NOVARTIS,Neurology
+Lantus,Insulin Glargine,SANOFI,Endocrinology
+Dupixent,Dupilumab,SANOFI,Immunology
+Toujeo,Insulin Glargine U-300,SANOFI,Endocrinology
+Trelegy Ellipta,Fluticasone / Umeclidinium / Vilanterol,GSK,Pulmonology
+Nucala,Mepolizumab,GSK,Pulmonology
+Biktarvy,Bictegravir / Emtricitabine / Tenofovir,GILEAD,Infectious Disease
+Yescarta,Axicabtagene Ciloleucel,GILEAD,Oncology
+Enbrel,Etanercept,AMGEN,Immunology
+Repatha,Evolocumab,AMGEN,Cardiology
+Otezla,Apremilast,AMGEN,Immunology
+Prolia,Denosumab,AMGEN,Endocrinology
+Jardiance,Empagliflozin,BOEHRINGER INGELHEIM,Endocrinology
+Trajenta,Linagliptin,BOEHRINGER INGELHEIM,Endocrinology
+Spiriva,Tiotropium,BOEHRINGER INGELHEIM,Pulmonology
+Entyvio,Vedolizumab,TAKEDA,Gastroenterology
+Eylea,Aflibercept,REGENERON,Ophthalmology
+Praluent,Alirocumab,REGENERON,Cardiology
+Tecfidera,Dimethyl Fumarate,BIOGEN,Neurology
+Spinraza,Nusinersen,BIOGEN,Neurology
+Trikafta,Elexacaftor / Tezacaftor / Ivacaftor,VERTEX,Pulmonology
+Spikevax,Elasomeran,MODERNA,Infectious Disease

@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: int_physician_payments_agg
+    description: >
+      (physician × company) aggregation of Open Payments. Pivots payment
+      categories into columns so downstream models don't have to.
+    columns:
+      - name: physician_npi
+        tests: [not_null]
+      - name: company_name
+        tests: [not_null]
+      - name: total_payment_usd
+        description: Sum of all payment amounts across the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+
+  - name: int_drug_company_mapping
+    description: >
+      Curated lookup mapping each tracked drug to its manufacturer and
+      therapeutic class. Loaded from seeds/drug_company_seed.csv.
+    columns:
+      - name: drug_brand_name_upper
+        description: Uppercased brand name (join key)
+        tests:
+          - not_null
+          - unique
+      - name: company_name
+        description: Canonical manufacturer name (matches stg_open_payments)
+        tests: [not_null]
+
+  - name: int_physician_drug_prescribing
+    description: >
+      (physician × company) aggregation of Part D prescribing — what each
+      physician prescribed from each tracked manufacturer.
+    columns:
+      - name: physician_npi
+        tests: [not_null]
+      - name: company_name
+        tests: [not_null]
+      - name: company_claim_count
+        description: Total Part D claims for this company's drugs from this physician
+        tests:
+          - not_null

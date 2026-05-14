@@ -1,0 +1,112 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Mart layer — star schema. These are the tables a BI analyst or the
+# Streamlit app queries directly. All tests are enforced here because
+# anything failing past this layer is a bug in production data.
+# ──────────────────────────────────────────────────────────────────────────────
+
+models:
+  - name: dim_physician
+    description: >
+      Physician (NPI-level) dimension. Unified across Medicare Part D
+      prescribers AND Open Payments recipients — payment-only physicians
+      (those who received pharma payments but didn't prescribe under
+      Medicare Part D) are flagged with is_part_d_prescriber = FALSE.
+    columns:
+      - name: physician_npi
+        description: 10-digit NPI — primary key
+        tests:
+          - not_null
+          - unique
+      - name: physician_display_id
+        description: Anonymized display label (e.g. "Physician #4837")
+        tests: [not_null]
+      - name: specialty
+        description: Provider specialty; "Unknown" for payment-only physicians
+        tests: [not_null]
+      - name: is_part_d_prescriber
+        description: TRUE if the physician appears in the Medicare Part D file
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: received_pharma_payments
+        description: TRUE if the physician received any tracked-company payment in 2022
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: dim_company
+    description: Pharma manufacturer dimension
+    columns:
+      - name: company_name
+        description: Canonical company name — primary key
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_drug
+    description: Drug dimension — one row per (brand, manufacturer)
+    columns:
+      - name: drug_key
+        description: Surrogate key (brand + manufacturer)
+        tests:
+          - not_null
+          - unique
+      - name: therapeutic_class
+        tests: [not_null]
+
+  - name: fact_payments
+    description: One row per Open Payments transaction
+    columns:
+      - name: payment_id
+        description: >
+          Best-effort surrogate key. CMS does not publish a true primary
+          key for individual payments — see stg_open_payments for details.
+        tests:
+          - not_null
+      - name: physician_npi
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_physician')
+              field: physician_npi
+      - name: company_name
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: company_name
+
+  - name: fact_prescriptions
+    description: One row per (physician × drug) Part D prescribing record
+    columns:
+      - name: prescription_id
+        tests:
+          - not_null
+          - unique
+      - name: physician_npi
+        tests:
+          - not_null
+
+  - name: fact_payment_prescribing
+    description: >
+      The headline analytical table. (physician × company) rows with both
+      total payments received and total prescribing volume for that
+      company's drugs. Powers the central research question.
+    columns:
+      - name: physician_npi
+        tests: [not_null]
+      - name: company_name
+        tests: [not_null]
+      - name: relationship_type
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - paid_and_prescribed
+                - paid_no_rx
+                - rx_no_payment
+                - neither

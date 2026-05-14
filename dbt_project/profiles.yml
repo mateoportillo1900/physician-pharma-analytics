@@ -1,0 +1,26 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# dbt connection profile — Neon PostgreSQL
+#
+# Reads connection details from environment variables (set via .env file).
+# In production / CI, set these directly in the runtime environment.
+#
+# To use a local profiles.yml outside the project, copy this to:
+#   ~/.dbt/profiles.yml         (Mac/Linux)
+#   %USERPROFILE%\.dbt\profiles.yml   (Windows)
+# Or keep it here and run dbt with --profiles-dir dbt_project
+# ──────────────────────────────────────────────────────────────────────────────
+
+pharma_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('NEON_HOST') }}"
+      user: "{{ env_var('NEON_USER') }}"
+      password: "{{ env_var('NEON_PASSWORD') }}"
+      port: 5432
+      dbname: "{{ env_var('NEON_DBNAME') }}"
+      schema: raw
+      threads: 4
+      sslmode: require
+      keepalives_idle: 0

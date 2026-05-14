@@ -1,0 +1,36 @@
+# ── Data files (never commit raw CMS data) ──────────────────────────────────
+data/raw/
+data/*.csv
+data/*.zip
+*.duckdb
+
+# ── Environment & secrets ────────────────────────────────────────────────────
+.env
+*.env
+
+# ── dbt ──────────────────────────────────────────────────────────────────────
+dbt_project/target/
+dbt_project/logs/
+dbt_project/.user.yml
+dbt_project/dbt_packages/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv*/
+venv/
+env/
+dist/
+build/
+*.egg
+
+# ── OS & editors ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+*.swp
+
+# ── Local Claude Code metadata ───────────────────────────────────────────────
+.claude/

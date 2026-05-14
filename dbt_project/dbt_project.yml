@@ -1,0 +1,58 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# physician-pharma-analytics — dbt project
+#
+# Star-schema analytics warehouse over CMS Open Payments + Medicare Part D data,
+# answering the published research question: do physicians who receive pharma
+# payments prescribe more of that company's drugs?
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 'pharma_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'pharma_analytics'
+
+# ── Paths ────────────────────────────────────────────────────────────────────
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# ── Model configuration ──────────────────────────────────────────────────────
+# Storage-conscious materialization for Neon free tier (512 MB cap):
+#   • staging/intermediate: views (cheap, always fresh)
+#   • mart dimensions: views by default — most are large pass-throughs that
+#     don't need duplicating
+#   • mart small lookups (dim_drug, dim_company): tables — they're tiny and
+#     get joined to often
+#   • mart aggregated fact (fact_payment_prescribing): table — small
+#     aggregation, queried heavily
+models:
+  pharma_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    mart:
+      +materialized: view
+      +schema: mart
+      # Materialize the small dimensions and the analytical fact —
+      # they're joined to / queried often. The large pass-through
+      # facts stay as views to keep storage under Neon's 512 MB cap.
+      dim_drug:
+        +materialized: table
+      dim_company:
+        +materialized: table
+      dim_physician:
+        +materialized: table
+      fact_payment_prescribing:
+        +materialized: table

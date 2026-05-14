@@ -1,0 +1,39 @@
+version: 2
+
+seeds:
+  - name: drug_company_seed
+    description: >
+      Curated mapping of brand-name drugs to canonical manufacturer and
+      therapeutic class. Maintained manually because CMS Part D does not
+      include manufacturer attribution. Drugs were selected for high
+      Medicare Part D revenue across the therapeutic classes that drive
+      most pharma commercial spend (cardiology, oncology, immunology,
+      endocrinology, neurology, pulmonology).
+    config:
+      column_types:
+        drug_brand_name: varchar(100)
+        drug_generic_name: varchar(200)
+        manufacturer_canonical: varchar(100)
+        therapeutic_class: varchar(50)
+    columns:
+      - name: drug_brand_name
+        description: Brand name as it appears in CMS Part D files
+        tests: [not_null]
+      - name: manufacturer_canonical
+        description: Canonical manufacturer name (must match stg_open_payments)
+        tests: [not_null]
+      - name: therapeutic_class
+        description: High-level therapeutic area
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - Cardiology
+                - Oncology
+                - Immunology
+                - Endocrinology
+                - Neurology
+                - Pulmonology
+                - Gastroenterology
+                - Infectious Disease
+                - Ophthalmology

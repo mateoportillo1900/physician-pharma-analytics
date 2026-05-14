@@ -1,0 +1,100 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Raw data sources — loaded by scripts/load_data.py into the `raw` schema
+#
+# Source: CMS (Centers for Medicare & Medicaid Services), 2022 reporting year
+#   • openpaymentsdata.cms.gov  — Sunshine Act pharma payment disclosures
+#   • data.cms.gov              — Medicare Part D Prescriber Public Use File
+# ──────────────────────────────────────────────────────────────────────────────
+
+sources:
+  - name: raw
+    description: >
+      Raw CMS data loaded directly from federal public files. Subset to top
+      pharma companies and active Medicare Part D prescribers to keep the
+      analytics database under 200 MB.
+    schema: raw
+
+    tables:
+      - name: open_payments
+        description: >
+          CMS Open Payments — General Payments dataset, 2022 reporting year.
+          Each row is a single payment (cash, in-kind, meals, travel, etc.)
+          from a pharma/medical device company to a physician.
+          Filtered to top 30 payers by total spend.
+        columns:
+          - name: physician_npi
+            description: National Provider Identifier (10-digit physician ID)
+            tests:
+              - not_null
+          - name: company_name
+            description: Pharmaceutical or medical device manufacturer
+            tests:
+              - not_null
+          - name: payment_amount_usd
+            description: USD value of the payment
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  max_value: 100000000
+          - name: payment_date
+            description: Date the payment was made
+          - name: payment_nature
+            description: >
+              Nature of payment (e.g., Consulting Fee, Food and Beverage,
+              Speaking Fee, Travel and Lodging, Education, Charitable Contribution)
+          - name: recipient_state
+            description: 2-letter US state code
+
+      - name: part_d_prescribers
+        description: >
+          CMS Medicare Part D Prescribers by Provider — 2022. One row per
+          NPI; volume and cost aggregated across all drugs that provider
+          prescribed under Medicare Part D.
+        columns:
+          - name: physician_npi
+            description: National Provider Identifier
+            tests:
+              - not_null
+              - unique
+          - name: provider_first_name
+            description: Provider first name
+          - name: provider_last_name
+            description: Provider last name
+          - name: specialty
+            description: Provider primary specialty (e.g., Cardiology, Oncology)
+          - name: state
+            description: 2-letter US state code
+          - name: total_claim_count
+            description: Total Part D claims (prescriptions filled) in 2022
+            tests:
+              - not_null
+          - name: total_drug_cost_usd
+            description: Total drug cost paid under Part D in 2022
+          - name: total_beneficiary_count
+            description: Unique Medicare beneficiaries served
+
+      - name: part_d_by_drug
+        description: >
+          CMS Medicare Part D Prescribers by Provider AND Drug — 2022.
+          Heavily filtered to a curated drug list (~30 high-revenue drugs
+          across cardiology, oncology, immunology, endocrinology) to stay
+          under storage limits while preserving the join key needed for
+          payment-prescribing analyses.
+        columns:
+          - name: physician_npi
+            description: National Provider Identifier
+            tests:
+              - not_null
+          - name: drug_brand_name
+            description: Brand name of the drug
+          - name: drug_generic_name
+            description: Generic / chemical name of the drug
+          - name: total_claim_count
+            description: Number of claims for this drug by this prescriber
+            tests:
+              - not_null
+          - name: total_drug_cost_usd
+            description: Total Part D cost for this drug from this prescriber

@@ -1,0 +1,91 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Staging layer — tests and documentation
+#
+# Staging models are 1:1 with their source tables. They cast types, normalize
+# casing/whitespace, and apply canonical naming. No business logic happens here.
+# ──────────────────────────────────────────────────────────────────────────────
+
+models:
+  - name: stg_open_payments
+    description: >
+      Cleaned CMS Open Payments. One row per payment transaction. Company
+      names are canonicalized to consolidate parent/subsidiary variants.
+    columns:
+      - name: payment_id
+        description: >
+          Best-effort surrogate key — hash of NPI + company + date + amount
+          + nature. CMS does not publish a true primary key for individual
+          payments, so collisions occur (~1.6%) when a physician receives
+          identical-amount payments of the same type from the same company
+          on the same day. These are typically multiple meal events at the
+          same restaurant. We use the key for joins but don't enforce
+          uniqueness.
+        tests:
+          - not_null
+      - name: physician_npi
+        description: 10-digit NPI, leading zeros preserved
+        tests:
+          - not_null
+      - name: company_name
+        description: Canonical pharma company name (uppercase, consolidated subsidiaries)
+        tests:
+          - not_null
+      - name: payment_amount_usd
+        description: USD payment value
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+      - name: payment_category
+        description: >
+          Standardized payment type. One of: Food and Beverage, Consulting Fee,
+          Speaking Fee, Travel and Lodging, Education, Gift, Honoraria,
+          Entertainment, Grant, Charitable Contribution, Royalty / License, Other
+        tests:
+          - accepted_values:
+              values:
+                - 'Food and Beverage'
+                - 'Consulting Fee'
+                - 'Speaking Fee'
+                - 'Travel and Lodging'
+                - 'Education'
+                - 'Gift'
+                - 'Honoraria'
+                - 'Entertainment'
+                - 'Grant'
+                - 'Charitable Contribution'
+                - 'Royalty / License'
+                - 'Other'
+
+  - name: stg_part_d_prescribers
+    description: >
+      Cleaned CMS Medicare Part D Prescribers by Provider — one row per NPI
+      with their total 2022 Part D claim volume, cost, and beneficiary count.
+    columns:
+      - name: physician_npi
+        description: 10-digit NPI
+        tests:
+          - not_null
+          - unique
+      - name: specialty
+        description: Canonical specialty name
+        tests:
+          - not_null
+      - name: total_claim_count
+        description: Total Part D claims in 2022 (NULL if CMS-redacted)
+
+  - name: stg_part_d_by_drug
+    description: >
+      Drug-level prescribing detail per physician. Powers the
+      payment-to-prescribing correlation analysis.
+    columns:
+      - name: physician_npi
+        description: 10-digit NPI
+        tests:
+          - not_null
+      - name: drug_brand_name
+        description: Drug brand name
+        tests:
+          - not_null
