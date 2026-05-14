@@ -83,16 +83,23 @@ with st.sidebar:
         '<div class="sidebar-nav-label">VIEWS</div>',
         unsafe_allow_html=True,
     )
-    st.page_link("views/dashboard.py", label="Executive Dashboard",
-                 icon=":material/dashboard:")
-    st.page_link("views/kol_finder.py", label="KOL Finder",
-                 icon=":material/search:")
-    st.page_link("views/company_intelligence.py", label="Company Intelligence",
-                 icon=":material/business:")
-    st.page_link("views/payment_vs_prescribing.py", label="Payment vs. Prescribing",
-                 icon=":material/trending_up:")
-    st.page_link("views/market_map.py", label="Market Opportunity Map",
-                 icon=":material/map:")
+    st.page_link(
+        "views/dashboard.py", label="Executive Dashboard", icon=":material/dashboard:"
+    )
+    st.page_link("views/kol_finder.py", label="KOL Finder", icon=":material/search:")
+    st.page_link(
+        "views/company_intelligence.py",
+        label="Company Intelligence",
+        icon=":material/business:",
+    )
+    st.page_link(
+        "views/payment_vs_prescribing.py",
+        label="Payment vs. Prescribing",
+        icon=":material/trending_up:",
+    )
+    st.page_link(
+        "views/market_map.py", label="Market Opportunity Map", icon=":material/map:"
+    )
 
     st.divider()
 

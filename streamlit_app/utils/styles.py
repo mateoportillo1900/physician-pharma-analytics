@@ -471,7 +471,7 @@ def _md_bold_to_html(text: str) -> str:
     st.markdown, Streamlit treats the contents as HTML and skips its
     markdown processor — so `**bold**` would render as literal asterisks.
     """
-    import re                                       # noqa: PLC0415
+    import re  # noqa: PLC0415
 
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
 
@@ -565,9 +565,7 @@ def chart_intro(body: str) -> None:
 
     Supports **bold** markdown. Place immediately before the chart.
     """
-    html = (
-        f'<div class="chart-intro">{_md_bold_to_html(body)}</div>'
-    )
+    html = f'<div class="chart-intro">{_md_bold_to_html(body)}</div>'
     st.markdown(html, unsafe_allow_html=True)
 
 

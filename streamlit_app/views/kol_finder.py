@@ -16,7 +16,12 @@ import streamlit as st
 from utils.charts import scatter_chart
 from utils.db import run_query
 from utils.llm import render_explain_button
-from utils.styles import apply_global_styles, chart_intro, hero, page_guide, section_heading
+from utils.styles import (
+    apply_global_styles,
+    hero,
+    page_guide,
+    section_heading,
+)
 
 apply_global_styles()
 

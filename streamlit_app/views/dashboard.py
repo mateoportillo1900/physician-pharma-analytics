@@ -249,43 +249,45 @@ with col4:
 st.divider()
 
 with st.expander("About the four sub-views"):
-    render_page_cards([
-        {
-            "tag": "KOL Finder",
-            "title": "Top prescribers in any therapeutic class",
-            "description": (
-                "Filter by class, state, and payment status to surface the "
-                "highest-volume Medicare Part D prescribers — pharma's "
-                "Key Opinion Leaders."
-            ),
-        },
-        {
-            "tag": "Company Intelligence",
-            "title": "Deep dive on a single manufacturer",
-            "description": (
-                "Specialty mix, payment-type mix, geographic distribution, "
-                "and top 25 paid physicians for any company."
-            ),
-        },
-        {
-            "tag": "Payment vs. Prescribing",
-            "title": "The headline research question",
-            "description": (
-                "Reproduces DeJong et al. (JAMA, 2016): do paid physicians "
-                "prescribe more, controlled for specialty? Lift ratio + "
-                "Pearson correlation."
-            ),
-        },
-        {
-            "tag": "Market Opportunity Map",
-            "title": "Geographic over/under-investment",
-            "description": (
-                "US choropleth showing payment share ÷ Rx share. Highlights "
-                "states pharma is over- or under-investing relative to "
-                "actual prescribing volume."
-            ),
-        },
-    ])
+    render_page_cards(
+        [
+            {
+                "tag": "KOL Finder",
+                "title": "Top prescribers in any therapeutic class",
+                "description": (
+                    "Filter by class, state, and payment status to surface the "
+                    "highest-volume Medicare Part D prescribers — pharma's "
+                    "Key Opinion Leaders."
+                ),
+            },
+            {
+                "tag": "Company Intelligence",
+                "title": "Deep dive on a single manufacturer",
+                "description": (
+                    "Specialty mix, payment-type mix, geographic distribution, "
+                    "and top 25 paid physicians for any company."
+                ),
+            },
+            {
+                "tag": "Payment vs. Prescribing",
+                "title": "The headline research question",
+                "description": (
+                    "Reproduces DeJong et al. (JAMA, 2016): do paid physicians "
+                    "prescribe more, controlled for specialty? Lift ratio + "
+                    "Pearson correlation."
+                ),
+            },
+            {
+                "tag": "Market Opportunity Map",
+                "title": "Geographic over/under-investment",
+                "description": (
+                    "US choropleth showing payment share ÷ Rx share. Highlights "
+                    "states pharma is over- or under-investing relative to "
+                    "actual prescribing volume."
+                ),
+            },
+        ]
+    )
 
 
 with st.expander("Data sources, methodology, and disclaimers"):

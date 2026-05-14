@@ -27,9 +27,9 @@ jobs:
       - name: Ruff format check
         run: ruff format --check scripts streamlit_app
 
-  # ── Parse & test dbt (no DB connection — just syntactic) ──────────────────
+  # ── Parse dbt (no DB connection — pure syntactic / structural check) ─────
   dbt-parse:
-    name: dbt parse + compile
+    name: dbt parse
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

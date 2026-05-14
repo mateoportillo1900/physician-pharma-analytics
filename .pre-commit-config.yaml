@@ -1,0 +1,35 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Pre-commit hooks
+#
+# Auto-formats and lints Python before any commit lands. Prevents the
+# "CI keeps failing on ruff format" loop where formatter complaints make
+# it to GitHub.
+#
+# Install once per clone:
+#     pip install pre-commit
+#     pre-commit install
+#
+# Then ruff format + ruff check run automatically on `git commit`.
+# To run manually across all files:
+#     pre-commit run --all-files
+# ──────────────────────────────────────────────────────────────────────────────
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      # 1. Format Python (writes changes back to files)
+      - id: ruff-format
+      # 2. Lint Python (fails the commit if rules are violated)
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Cheap sanity hooks
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
