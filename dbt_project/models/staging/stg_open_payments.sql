@@ -59,19 +59,36 @@ cleaned as (
         cast(payment_amount_usd as numeric(14, 2)) as payment_amount_usd,
         cast(payment_date as date) as payment_date,
 
-        -- Standardize payment-type categories
+        -- Standardize payment-type categories.
+        -- Order matters: more-specific patterns must precede less-specific
+        -- ones, because CMS's longest nature description literally contains
+        -- the word "consulting" ("Compensation for services other than
+        -- consulting, including serving as faculty or as a speaker...") and
+        -- would be miscategorized if we tested a generic "%consulting%"
+        -- rule first.
         case
-            when payment_nature ilike '%food%beverage%' then 'Food and Beverage'
-            when payment_nature ilike '%consulting%' then 'Consulting Fee'
-            when payment_nature ilike '%compensation%services%' then 'Speaking Fee'
-            when payment_nature ilike '%travel%lodging%' then 'Travel and Lodging'
+            when payment_nature ilike '%food and beverage%'
+                then 'Food and Beverage'
+            when payment_nature ilike '%travel and lodging%'
+                then 'Travel and Lodging'
+            when payment_nature ilike '%compensation%services other than consulting%'
+                or payment_nature ilike '%compensation%speaker%'
+                or payment_nature ilike '%compensation%faculty%'
+                then 'Speaking Fee'
+            when payment_nature ilike '%consulting fee%'
+                then 'Consulting Fee'
             when payment_nature ilike '%education%' then 'Education'
-            when payment_nature ilike '%gift%' then 'Gift'
             when payment_nature ilike '%honoraria%' then 'Honoraria'
-            when payment_nature ilike '%entertainment%' then 'Entertainment'
+            when payment_nature ilike '%royalty%' then 'Royalty / License'
             when payment_nature ilike '%grant%' then 'Grant'
             when payment_nature ilike '%charitable%' then 'Charitable Contribution'
-            when payment_nature ilike '%royalty%license%' then 'Royalty / License'
+            when payment_nature ilike '%medical supply%'
+                or payment_nature ilike '%device loan%'
+                then 'Device Loan'
+            when payment_nature ilike '%acquisition%' then 'Acquisition'
+            when payment_nature ilike '%debt forgiveness%' then 'Debt Forgiveness'
+            when payment_nature ilike '%gift%' then 'Gift'
+            when payment_nature ilike '%entertainment%' then 'Entertainment'
             else 'Other'
         end as payment_category,
 

@@ -47,16 +47,19 @@ models:
           - accepted_values:
               values:
                 - 'Food and Beverage'
-                - 'Consulting Fee'
-                - 'Speaking Fee'
                 - 'Travel and Lodging'
+                - 'Speaking Fee'
+                - 'Consulting Fee'
                 - 'Education'
-                - 'Gift'
                 - 'Honoraria'
-                - 'Entertainment'
+                - 'Royalty / License'
                 - 'Grant'
                 - 'Charitable Contribution'
-                - 'Royalty / License'
+                - 'Device Loan'
+                - 'Acquisition'
+                - 'Debt Forgiveness'
+                - 'Gift'
+                - 'Entertainment'
                 - 'Other'
 
   - name: stg_part_d_prescribers

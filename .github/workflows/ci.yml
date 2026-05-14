@@ -47,22 +47,15 @@ jobs:
         working-directory: dbt_project
         run: dbt deps
 
-      - name: dbt parse (compile-only, no DB)
+      - name: dbt parse (validates SQL syntax + project structure, no DB)
         working-directory: dbt_project
         env:
           # CI doesn't connect to a real DB — use dummy values that satisfy
-          # profiles.yml's env_var() calls
+          # profiles.yml's env_var() calls. We use `parse` rather than
+          # `compile` because compile attempts a database connection in
+          # dbt-core 1.11+ even when nothing is being run.
           NEON_HOST: localhost
           NEON_USER: dummy
           NEON_PASSWORD: dummy
           NEON_DBNAME: dummy
         run: dbt parse --profiles-dir .
-
-      - name: dbt compile (syntax check)
-        working-directory: dbt_project
-        env:
-          NEON_HOST: localhost
-          NEON_USER: dummy
-          NEON_PASSWORD: dummy
-          NEON_DBNAME: dummy
-        run: dbt compile --profiles-dir .

@@ -76,12 +76,53 @@ def choropleth_us(
 
 
 def donut_chart(
-    df: pd.DataFrame, names: str, values: str, title: str
+    df: pd.DataFrame, names: str, values: str, title: str,
+    label_threshold_pct: float = 5.0,
 ) -> go.Figure:
-    """Donut chart for proportional breakdowns."""
+    """Donut chart for proportional breakdowns.
+
+    Only labels slices >= label_threshold_pct of total to avoid label
+    overlap. Smaller slices show on hover and in the legend.
+    """
+    total = df[values].sum()
+    pct = (df[values] / total * 100)
+
+    # Build per-slice text: only show label for big slices
+    text = [
+        f"{name}<br>{p:.1f}%" if p >= label_threshold_pct else ""
+        for name, p in zip(df[names], pct, strict=False)
+    ]
+
     fig = px.pie(
-        df, names=names, values=values, title=title, hole=0.5,
+        df, names=names, values=values, title=title, hole=0.55,
         color_discrete_sequence=PALETTE,
     )
-    fig.update_traces(textposition="outside", textinfo="label+percent")
+    fig.update_traces(
+        text=text,
+        textposition="outside",
+        textinfo="text",
+        hovertemplate="<b>%{label}</b><br>$%{value:.1f}<br>%{percent}<extra></extra>",
+    )
+    fig.update_layout(uniformtext_minsize=11, uniformtext_mode="hide")
+    return style_figure(fig, height=450)
+
+
+def proportional_bar(
+    df: pd.DataFrame, category_col: str, value_col: str, title: str
+) -> go.Figure:
+    """Horizontal bar — preferred over donut when there are many categories
+    or many small slices that would clutter a pie."""
+    sorted_df = df.sort_values(value_col, ascending=True)
+    fig = px.bar(
+        sorted_df,
+        x=value_col,
+        y=category_col,
+        orientation="h",
+        title=title,
+        color_discrete_sequence=[PALETTE[0]],
+    )
+    fig.update_traces(
+        hovertemplate="<b>%{y}</b><br>$%{x:,.1f}<extra></extra>",
+    )
+    fig.update_yaxes(title=None)
     return style_figure(fig)

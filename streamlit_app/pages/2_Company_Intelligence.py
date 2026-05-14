@@ -102,7 +102,7 @@ with col1:
     fig = bar_chart(
         spec_df.sort_values("spend_k"),
         x="spend_k", y="specialty",
-        title=f"Top 10 Specialties by Spend ($K)",
+        title="Top 10 Specialties by Spend ($K)",
         orientation="h",
     )
     fig.update_xaxes(title="Spend ($ Thousands)")
@@ -171,7 +171,7 @@ geo_df = run_query(
 
 fig = choropleth_us(
     geo_df, state_col="state", value_col="spend_k",
-    title=f"2022 Spend by State ($K)",
+    title="2022 Spend by State ($K)",
 )
 st.plotly_chart(fig, use_container_width=True)
 

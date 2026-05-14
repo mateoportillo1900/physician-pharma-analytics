@@ -34,9 +34,11 @@ aggregated as (
             as spend_education_usd,
         sum(payment_amount_usd) filter (where payment_category = 'Honoraria')
             as spend_honoraria_usd,
+        sum(payment_amount_usd) filter (where payment_category = 'Royalty / License')
+            as spend_royalty_usd,
         sum(payment_amount_usd) filter (where payment_category in (
                 'Gift', 'Entertainment', 'Grant', 'Charitable Contribution',
-                'Royalty / License', 'Other'
+                'Device Loan', 'Acquisition', 'Debt Forgiveness', 'Other'
             )) as spend_other_usd,
 
         -- Largest single payment received from this company

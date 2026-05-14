@@ -274,3 +274,71 @@ def hero(title: str, subtitle: str, meta: str | None = None) -> None:
             '<div style="margin-bottom: 1.5rem"></div>',
             unsafe_allow_html=True,
         )
+
+
+PAGE_CARD_CSS = """
+<style>
+.page-card-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.page-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-left: 4px solid #1E3A8A;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.page-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15,23,42,0.08);
+}
+.page-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.3rem;
+}
+.page-card-tag {
+    display: inline-block;
+    background: #F1F5F9;
+    color: #1E3A8A;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+.page-card-desc {
+    color: #475569;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+</style>
+"""
+
+
+def render_page_cards(cards: list[dict]) -> None:
+    """Render a 2-column grid of page-purpose cards on the landing page.
+
+    Each card dict: {tag, title, description}
+    """
+    st.markdown(PAGE_CARD_CSS, unsafe_allow_html=True)
+
+    cards_html = ['<div class="page-card-row">']
+    for card in cards:
+        cards_html.append(f"""
+            <div class="page-card">
+                <div class="page-card-tag">{card['tag']}</div>
+                <div class="page-card-title">{card['title']}</div>
+                <div class="page-card-desc">{card['description']}</div>
+            </div>
+        """)
+    cards_html.append("</div>")
+    st.markdown("\n".join(cards_html), unsafe_allow_html=True)
