@@ -43,9 +43,10 @@ sits behind the work that teams at ZS Associates, IQVIA, Komodo Health,
 AbbVie, and Tempus AI do every day for pharma clients. Specifically, it
 exercises:
 
-- **Analytics engineering** — a 12-model dbt project laid out in
+- **Analytics engineering** — a 13-model dbt project laid out in
   staging → intermediate → mart layers, with a proper star schema
-  (4 dimensions, 3 facts) and 59 passing data-quality tests
+  (3 dimensions, 3 facts, 1 helper bridge) and 57 passing
+  data-quality tests, indexed for fast filter lookups
 - **Advanced SQL** — window functions, percentile aggregations, full
   outer joins, CTE-based ranking, cross-source NPI matching
 - **Cloud data warehouse** — Neon Postgres on the free tier, with

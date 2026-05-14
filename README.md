@@ -38,11 +38,11 @@ flowchart TB
         RAW["raw schema<br/>(filtered: top 10 mfrs,<br/>≥ $50 payments)"]
         STG["raw_staging  (views)"]
         INT["raw_intermediate  (views)"]
-        MART["raw_mart<br/>★ star schema:<br/>3 dims + 3 facts"]
+        MART["raw_mart<br/>★ star schema:<br/>3 dims + 3 facts + 1 bridge"]
     end
 
     subgraph TRANSFORM["3 · Transformation  (dbt)"]
-        DBT["12 models<br/>59 passing tests"]
+        DBT["13 models<br/>57 passing tests"]
     end
 
     subgraph APP["4 · Application  (Streamlit)"]
@@ -128,7 +128,7 @@ erDiagram
 
 | Document | Covers |
 |---|---|
-| [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md) | dbt model lineage (all 12 models), user-interaction sequence, LLM "Explain this chart" flow |
+| [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md) | dbt model lineage (all 13 models), user-interaction sequence, LLM "Explain this chart" flow |
 | [**docs/DATA_MODEL.md**](./docs/DATA_MODEL.md) | Full table reference, data-quality enforcement (59 tests), privacy-by-design |
 | [**METHODOLOGY.md**](./METHODOLOGY.md) | Statistical formulas (lift ratio, HHI, investment ratio), the BMS reporting quirk, what we can and cannot conclude |
 
@@ -269,7 +269,7 @@ cd dbt_project
 dbt deps                          # install dbt packages
 dbt seed --profiles-dir .         # load the drug→company mapping
 dbt run --profiles-dir .          # build all models
-dbt test --profiles-dir .         # run all 59 data-quality tests
+dbt test --profiles-dir .         # run all 57 data-quality tests
 cd ..
 
 # 8. Run the Streamlit app

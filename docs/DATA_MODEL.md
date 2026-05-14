@@ -94,11 +94,17 @@ erDiagram
 
 ### Facts
 
-| Table | Grain | Used by |
-|---|---|---|
-| `fact_payments` | 1 row per Open Payments transaction | Executive Dashboard, Company Intelligence, Market Opportunity Map |
-| `fact_prescriptions` | 1 row per (physician × drug) | KOL Finder, Market Opportunity Map |
-| `fact_payment_prescribing` | 1 row per (physician × company) — **paired view of payments AND prescribing** | Payment vs. Prescribing (the headline analytical view) |
+| Table | Grain | Materialization | Used by |
+|---|---|---|---|
+| `fact_payments` | 1 row per Open Payments transaction | view | Executive Dashboard, Company Intelligence, Market Opportunity Map |
+| `fact_prescriptions` | 1 row per (physician × drug) | **table** + indexes on `therapeutic_class` and `physician_npi` | KOL Finder, Market Opportunity Map |
+| `fact_payment_prescribing` | 1 row per (physician × company) — **paired view of payments AND prescribing** | view | Payment vs. Prescribing (the headline analytical view) |
+
+### Helper
+
+| Table | Grain | Materialization | Used by |
+|---|---|---|---|
+| `bridge_physician_company_payments` | 1 row per (physician × company) — payments only, no FULL-OUTER-JOIN overhead | **table** + index on `company_name` | KOL Finder (avoids the 1.2M-row join cost) |
 
 ---
 
@@ -134,17 +140,17 @@ unpaid, within specialty).
 ## Data quality enforcement
 
 Every dim and fact has tests in its `_schema.yml`. The dbt test run
-executes 59 assertions on every build:
+executes 57 assertions on every build:
 
 ```mermaid
 flowchart LR
-    UNIQUE["unique<br/>(13 tests)"]
-    NN["not_null<br/>(28 tests)"]
+    UNIQUE["unique<br/>(12 tests)"]
+    NN["not_null<br/>(27 tests)"]
     AV["accepted_values<br/>(3 tests)"]
     REL["relationships<br/>(8 tests)"]
     EXP["dbt_expectations<br/>range checks<br/>(7 tests)"]
 
-    UNIQUE --> ALL["dbt test ✓ 59/59 passing"]
+    UNIQUE --> ALL["dbt test ✓ 57/57 passing"]
     NN --> ALL
     AV --> ALL
     REL --> ALL
@@ -201,8 +207,8 @@ See `METHODOLOGY.md` § 0 for the full privacy rationale.
 cd dbt_project
 dbt deps                   # one-time: pull dbt-utils + dbt-expectations
 dbt seed --profiles-dir .  # load drug→company seed
-dbt run --profiles-dir .   # build all 12 models in dependency order
-dbt test --profiles-dir .  # run all 59 data-quality tests
+dbt run --profiles-dir .   # build all 13 models in dependency order
+dbt test --profiles-dir .  # run all 57 data-quality tests
 dbt docs generate          # generate the interactive lineage site
 dbt docs serve             # open it in your browser at localhost:8080
 ```

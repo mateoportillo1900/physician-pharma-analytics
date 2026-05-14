@@ -25,7 +25,7 @@ flowchart TB
         RAW["raw schema<br/>open_payments<br/>part_d_prescribers<br/>part_d_by_drug"]
         STG["raw_staging<br/>(views)"]
         INT["raw_intermediate<br/>(views)"]
-        MART["raw_mart<br/>(star schema:<br/>3 dims + 3 facts)"]
+        MART["raw_mart<br/>(star schema:<br/>3 dims + 3 facts<br/>+ 1 bridge)"]
     end
 
     subgraph TRANSFORM["3 · Transformation  (dbt)"]
@@ -33,7 +33,7 @@ flowchart TB
         STG_M["staging models"]
         INT_M["intermediate models"]
         MART_M["mart models"]
-        TESTS["59 data tests<br/>(unique, not_null,<br/>accepted_values,<br/>relationships)"]
+        TESTS["57 data tests<br/>(unique, not_null,<br/>accepted_values,<br/>relationships)"]
     end
 
     subgraph APP["4 · Application  (Streamlit)"]
@@ -131,9 +131,9 @@ storage cap while preserving the headline analyses.
 
 ## 3. dbt model lineage
 
-Twelve models, organized in three layers. dbt builds them bottom-up
-based on `ref()` calls. Dashed lines are FK relationships that the
-schema tests enforce.
+Thirteen models, organized in three layers. dbt builds them bottom-up
+based on `ref()` calls. Tables (pink/red) materialize; views (light fill)
+recompute on every query.
 
 ```mermaid
 flowchart TB
@@ -161,8 +161,9 @@ flowchart TB
         DIM_D["dim_drug<br/>(table)"]
         DIM_P["dim_physician<br/>(table)"]
         FACT_PAY["fact_payments<br/>(view)"]
-        FACT_RX["fact_prescriptions<br/>(view)"]
+        FACT_RX["fact_prescriptions<br/>(table + idx)"]
         FACT_PP["fact_payment_<br/>prescribing<br/>(view)"]
+        BRIDGE["bridge_physician_<br/>company_payments<br/>(table + idx)"]
     end
 
     S_OP --> STG_OP
@@ -187,22 +188,34 @@ flowchart TB
     INT_PA --> FACT_PP
     INT_DR --> FACT_PP
     DIM_P --> FACT_PP
+    INT_PA --> BRIDGE
 
     style DIM_C fill:#FCE7F3,stroke:#9F1239,color:#0F172A
     style DIM_D fill:#FCE7F3,stroke:#9F1239,color:#0F172A
     style DIM_P fill:#FCE7F3,stroke:#9F1239,color:#0F172A
     style FACT_PAY fill:#FEE2E2,stroke:#991B1B,color:#0F172A
-    style FACT_RX fill:#FEE2E2,stroke:#991B1B,color:#0F172A
+    style FACT_RX fill:#FEE2E2,stroke:#991B1B,color:#0F172A,stroke-width:2px
     style FACT_PP fill:#FEE2E2,stroke:#991B1B,color:#0F172A
+    style BRIDGE fill:#DBEAFE,stroke:#1E40AF,color:#0F172A,stroke-width:2px
 ```
 
-**Why dims are tables and facts are views:** the dims are tiny and
-joined to often, so we materialize. The facts have many rows but
-mostly pass-through logic, so views keep us under Neon's storage cap.
-`fact_payment_prescribing` is a full-outer-join of two intermediates —
-a *table* would be ~150 MB; a *view* recomputes in ~3 sec on demand
-and Streamlit caches for 10 minutes. The right trade-off for free-tier
-infra.
+**Materialization strategy** (was reverse-engineered from a 400× perf
+fix):
+
+- **Dims** are materialized as tables — tiny and joined to often
+- **`fact_prescriptions`** is a **table** with indexes on
+  `therapeutic_class` and `physician_npi`. Was a view originally;
+  filtering by therapeutic_class through the chained-view path took
+  ~80 seconds. As an indexed table, the same query is ~1 second
+- **`bridge_physician_company_payments`** is a small mart **table**
+  that exposes just `(physician_npi × company_name × total_payment_usd)`
+  from the intermediate aggregation. KOL Finder queries hit this
+  instead of `fact_payment_prescribing` (which would require computing
+  a 1.2M-row FULL OUTER JOIN on every click)
+- **`fact_payments`** and **`fact_payment_prescribing`** remain views —
+  the heavy fact join exceeds Neon's free-tier compute budget when
+  materialized in one shot. Streamlit's 10-min query cache makes the
+  view approach acceptable for the pages that use them
 
 ---
 
