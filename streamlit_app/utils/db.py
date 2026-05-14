@@ -38,7 +38,8 @@ def _get_database_url() -> str:
 @st.cache_resource
 def _connection_pool():
     """Lazy-initialized psycopg connection pool. One per Streamlit session."""
-    from psycopg_pool import ConnectionPool       # noqa: PLC0415
+    from psycopg_pool import ConnectionPool  # noqa: PLC0415
+
     return ConnectionPool(
         conninfo=_get_database_url(),
         min_size=1,

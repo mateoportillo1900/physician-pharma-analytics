@@ -74,55 +74,57 @@ st.markdown(
     "decide where to start."
 )
 
-render_page_cards([
-    {
-        "tag": "📊  Executive Dashboard",
-        "title": "This page",
-        "description": (
-            "Where the money goes overall — top spenders, payment-type "
-            "breakdown, which physician specialties get paid most, and a "
-            "first look at the paid-vs-unpaid prescribing comparison."
-        ),
-    },
-    {
-        "tag": "🔍  KOL Finder",
-        "title": "Find the top prescribers in any therapeutic class",
-        "description": (
-            "Filter by class (Oncology, Endocrinology, etc.), state, and "
-            "payment status. Get a ranked list of the highest-volume "
-            "Medicare Part D prescribers — the people pharma commercial "
-            "teams call KOLs (Key Opinion Leaders)."
-        ),
-    },
-    {
-        "tag": "🏢  Company Intelligence",
-        "title": "Deep dive on a single manufacturer",
-        "description": (
-            "Pick AbbVie, Pfizer, etc., and see their entire 2022 "
-            "commercial footprint: specialty mix, payment-type mix, "
-            "geographic distribution, and the top 25 physicians they paid."
-        ),
-    },
-    {
-        "tag": "📈  Payment vs. Prescribing",
-        "title": "The headline research question",
-        "description": (
-            "Reproduces the methodology from DeJong et al. (JAMA Internal "
-            "Medicine, 2016): do physicians who receive payments from a "
-            "company prescribe more of that company's drugs — controlled "
-            "for specialty? Includes lift ratio + correlation."
-        ),
-    },
-    {
-        "tag": "🗺️  Market Opportunity Map",
-        "title": "Geographic over/under-investment",
-        "description": (
-            "Where is pharma over- or under-invested relative to actual "
-            "prescribing volume? A US choropleth showing 'investment ratio' "
-            "(payment share ÷ Rx share) — the classic territory-planning view."
-        ),
-    },
-])
+render_page_cards(
+    [
+        {
+            "tag": "📊  Executive Dashboard",
+            "title": "This page",
+            "description": (
+                "Where the money goes overall — top spenders, payment-type "
+                "breakdown, which physician specialties get paid most, and a "
+                "first look at the paid-vs-unpaid prescribing comparison."
+            ),
+        },
+        {
+            "tag": "🔍  KOL Finder",
+            "title": "Find the top prescribers in any therapeutic class",
+            "description": (
+                "Filter by class (Oncology, Endocrinology, etc.), state, and "
+                "payment status. Get a ranked list of the highest-volume "
+                "Medicare Part D prescribers — the people pharma commercial "
+                "teams call KOLs (Key Opinion Leaders)."
+            ),
+        },
+        {
+            "tag": "🏢  Company Intelligence",
+            "title": "Deep dive on a single manufacturer",
+            "description": (
+                "Pick AbbVie, Pfizer, etc., and see their entire 2022 "
+                "commercial footprint: specialty mix, payment-type mix, "
+                "geographic distribution, and the top 25 physicians they paid."
+            ),
+        },
+        {
+            "tag": "📈  Payment vs. Prescribing",
+            "title": "The headline research question",
+            "description": (
+                "Reproduces the methodology from DeJong et al. (JAMA Internal "
+                "Medicine, 2016): do physicians who receive payments from a "
+                "company prescribe more of that company's drugs — controlled "
+                "for specialty? Includes lift ratio + correlation."
+            ),
+        },
+        {
+            "tag": "🗺️  Market Opportunity Map",
+            "title": "Geographic over/under-investment",
+            "description": (
+                "Where is pharma over- or under-invested relative to actual "
+                "prescribing volume? A US choropleth showing 'investment ratio' "
+                "(payment share ÷ Rx share) — the classic territory-planning view."
+            ),
+        },
+    ]
+)
 
 
 st.divider()
@@ -169,7 +171,8 @@ with col1:
     """)
     fig = bar_chart(
         top_companies.sort_values("spend_millions"),
-        x="spend_millions", y="company_name",
+        x="spend_millions",
+        y="company_name",
         title="2022 Spend by Manufacturer ($M)",
         orientation="h",
     )
@@ -236,7 +239,8 @@ with col3:
     """)
     fig = bar_chart(
         spend_by_specialty.sort_values("spend_millions"),
-        x="spend_millions", y="specialty",
+        x="spend_millions",
+        y="specialty",
         title="Top 12 Specialties by Payments Received ($M)",
         orientation="h",
     )
@@ -268,7 +272,9 @@ with col4:
         GROUP BY received_pharma_payments
     """)
     fig = bar_chart(
-        paid_vs_unpaid, x="group_label", y="avg_claims",
+        paid_vs_unpaid,
+        x="group_label",
+        y="avg_claims",
         title="Mean Part D Claims: Paid vs. Unpaid Physicians",
         color="group_label",
     )

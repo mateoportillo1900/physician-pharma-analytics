@@ -71,9 +71,7 @@ with c2:
 
 
 # ─── Aggregate stats (paid vs unpaid) ───────────────────────────────────────
-spec_filter = (
-    "AND specialty = %s" if selected_specialty != "All specialties" else ""
-)
+spec_filter = "AND specialty = %s" if selected_specialty != "All specialties" else ""
 params = (
     (selected_company, selected_specialty)
     if selected_specialty != "All specialties"
@@ -143,7 +141,9 @@ c4.metric(
 
 # ─── Bar comparison ──────────────────────────────────────────────────────────
 fig = bar_chart(
-    summary_df, x="group_label", y="avg_claims",
+    summary_df,
+    x="group_label",
+    y="avg_claims",
     title="Mean Prescribing Volume — Paid vs. Unpaid",
     color="group_label",
 )
@@ -193,14 +193,16 @@ if not scatter_df.empty and len(scatter_df) >= 10:
 
     fig = scatter_chart(
         scatter_df,
-        x="total_payment_usd", y="company_claim_count",
+        x="total_payment_usd",
+        y="company_claim_count",
         title=(
             f"Payments vs. Claims — {selected_company} "
             f"(r = {pearson:.3f}, n = {len(scatter_df):,})"
         ),
         color="specialty" if selected_specialty == "All specialties" else None,
         hover_data=["state"],
-        log_x=True, log_y=True,
+        log_x=True,
+        log_y=True,
     )
     fig.update_xaxes(title="Payments Received ($, log scale)")
     fig.update_yaxes(title="Part D Claims for Company's Drugs (log scale)")

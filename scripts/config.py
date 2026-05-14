@@ -46,8 +46,16 @@ PART_D_PROVIDER_DRUG_URL = (
 # Top 10 by 2022 spend — these alone account for ~60% of total industry
 # physician spend and cover all therapeutic classes in our drug seed.
 TRACKED_COMPANIES = [
-    "ABBVIE", "PFIZER", "JOHNSON & JOHNSON", "MERCK", "BRISTOL-MYERS SQUIBB",
-    "ELI LILLY", "NOVO NORDISK", "ASTRAZENECA", "NOVARTIS", "AMGEN",
+    "ABBVIE",
+    "PFIZER",
+    "JOHNSON & JOHNSON",
+    "MERCK",
+    "BRISTOL-MYERS SQUIBB",
+    "ELI LILLY",
+    "NOVO NORDISK",
+    "ASTRAZENECA",
+    "NOVARTIS",
+    "AMGEN",
 ]
 
 # Minimum payment to load. Drops the vast majority of $5-$20 individual
@@ -62,39 +70,80 @@ MIN_PAYMENT_USD = 50.0
 # that seed file — keep in sync.
 TRACKED_DRUGS = [
     # AbbVie
-    "Humira", "Skyrizi", "Rinvoq", "Imbruvica", "Venclexta",
+    "Humira",
+    "Skyrizi",
+    "Rinvoq",
+    "Imbruvica",
+    "Venclexta",
     # BMS
-    "Eliquis", "Opdivo", "Revlimid", "Pomalyst",
+    "Eliquis",
+    "Opdivo",
+    "Revlimid",
+    "Pomalyst",
     # Merck
-    "Keytruda", "Januvia", "Janumet",
+    "Keytruda",
+    "Januvia",
+    "Janumet",
     # Lilly
-    "Trulicity", "Mounjaro", "Verzenio", "Taltz",
+    "Trulicity",
+    "Mounjaro",
+    "Verzenio",
+    "Taltz",
     # Novo Nordisk
-    "Ozempic", "Wegovy", "Rybelsus", "Victoza", "Tresiba",
+    "Ozempic",
+    "Wegovy",
+    "Rybelsus",
+    "Victoza",
+    "Tresiba",
     # Pfizer
-    "Ibrance", "Xeljanz", "Vyndamax", "Lipitor",
+    "Ibrance",
+    "Xeljanz",
+    "Vyndamax",
+    "Lipitor",
     # J&J
-    "Stelara", "Tremfya", "Xarelto", "Invokana", "Darzalex",
+    "Stelara",
+    "Tremfya",
+    "Xarelto",
+    "Invokana",
+    "Darzalex",
     # AstraZeneca
-    "Tagrisso", "Farxiga", "Brilinta", "Symbicort", "Lynparza",
+    "Tagrisso",
+    "Farxiga",
+    "Brilinta",
+    "Symbicort",
+    "Lynparza",
     # Novartis
-    "Entresto", "Cosentyx", "Kisqali", "Gilenya",
+    "Entresto",
+    "Cosentyx",
+    "Kisqali",
+    "Gilenya",
     # Sanofi
-    "Lantus", "Dupixent", "Toujeo",
+    "Lantus",
+    "Dupixent",
+    "Toujeo",
     # GSK
-    "Trelegy Ellipta", "Nucala",
+    "Trelegy Ellipta",
+    "Nucala",
     # Gilead
-    "Biktarvy", "Yescarta",
+    "Biktarvy",
+    "Yescarta",
     # Amgen
-    "Enbrel", "Repatha", "Otezla", "Prolia",
+    "Enbrel",
+    "Repatha",
+    "Otezla",
+    "Prolia",
     # Boehringer Ingelheim
-    "Jardiance", "Trajenta", "Spiriva",
+    "Jardiance",
+    "Trajenta",
+    "Spiriva",
     # Takeda
     "Entyvio",
     # Regeneron
-    "Eylea", "Praluent",
+    "Eylea",
+    "Praluent",
     # Biogen
-    "Tecfidera", "Spinraza",
+    "Tecfidera",
+    "Spinraza",
     # Vertex
     "Trikafta",
     # Moderna
@@ -103,11 +152,24 @@ TRACKED_DRUGS = [
 
 # Specialty filter for Part D Prescribers (top prescribing specialties)
 TRACKED_SPECIALTIES = [
-    "Cardiology", "Oncology", "Hematology / Oncology", "Endocrinology",
-    "Rheumatology", "Gastroenterology", "Neurology", "Psychiatry",
-    "Dermatology", "Pulmonology", "Nephrology", "Urology",
-    "Infectious Disease", "Family Medicine", "Internal Medicine",
-    "General Practice", "Nurse Practitioner", "Physician Assistant",
+    "Cardiology",
+    "Oncology",
+    "Hematology / Oncology",
+    "Endocrinology",
+    "Rheumatology",
+    "Gastroenterology",
+    "Neurology",
+    "Psychiatry",
+    "Dermatology",
+    "Pulmonology",
+    "Nephrology",
+    "Urology",
+    "Infectious Disease",
+    "Family Medicine",
+    "Internal Medicine",
+    "General Practice",
+    "Nurse Practitioner",
+    "Physician Assistant",
 ]
 
 # Minimum activity threshold — drop tiny prescribers (lots of noise, no signal)

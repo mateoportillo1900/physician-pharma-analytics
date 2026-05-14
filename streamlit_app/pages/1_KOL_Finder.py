@@ -63,9 +63,7 @@ with c4:
     top_n = st.slider("Top N", 10, 200, 50, step=10)
 
 # ─── Query ───────────────────────────────────────────────────────────────────
-state_filter_sql = (
-    "AND dp.state = ANY(%s)" if selected_states else ""
-)
+state_filter_sql = "AND dp.state = ANY(%s)" if selected_states else ""
 payment_filter_sql = {
     "Paid only": "AND dp.received_pharma_payments = TRUE",
     "Unpaid only": "AND dp.received_pharma_payments = FALSE",
@@ -136,9 +134,16 @@ display_df["class_drug_cost"] = display_df["class_drug_cost"].apply(
 display_df["total_payments_usd"] = display_df["total_payments_usd"].apply(
     lambda x: f"${x:,.0f}"
 )
-display_df.columns = ["Rank", "Physician", "Specialty", "State",
-                      "Class Claims", "Class Drug Cost",
-                      "Payments Received", "Paid"]
+display_df.columns = [
+    "Rank",
+    "Physician",
+    "Specialty",
+    "State",
+    "Class Claims",
+    "Class Drug Cost",
+    "Payments Received",
+    "Paid",
+]
 
 st.dataframe(display_df, use_container_width=True, hide_index=True, height=420)
 

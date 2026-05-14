@@ -48,13 +48,16 @@ def download_file(url: str, dest: Path, chunk_size: int = 1 << 20) -> None:
     with requests.get(url, stream=True, timeout=60) as r:
         r.raise_for_status()
         total = int(r.headers.get("content-length", 0))
-        with open(dest, "wb") as f, tqdm(
-            total=total,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=1024,
-            desc=f"    {dest.name}",
-        ) as pbar:
+        with (
+            open(dest, "wb") as f,
+            tqdm(
+                total=total,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1024,
+                desc=f"    {dest.name}",
+            ) as pbar,
+        ):
             for chunk in r.iter_content(chunk_size=chunk_size):
                 f.write(chunk)
                 pbar.update(len(chunk))
@@ -76,7 +79,8 @@ def unzip_open_payments(zip_path: Path) -> Path:
         # Open Payments zips contain General, Research, and Ownership files.
         # We only want General (the bulk of pharma rep / KOL payments).
         general_files = [
-            name for name in z.namelist()
+            name
+            for name in z.namelist()
             if name.startswith("OP_DTL_GNRL_PGYR") and name.endswith(".csv")
         ]
         if not general_files:
@@ -104,7 +108,7 @@ def main() -> int:
     try:
         download_file(OPEN_PAYMENTS_URL, op_zip)
         unzip_open_payments(op_zip)
-    except Exception as exc:                  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print(f"  ⚠ Open Payments download failed: {exc}")
         print(
             "  If the CMS URL has changed, find the current 2022 General "
@@ -117,7 +121,7 @@ def main() -> int:
     pd_provider = RAW_DIR / "part_d_provider_2022.csv"
     try:
         download_file(PART_D_PROVIDER_URL, pd_provider)
-    except Exception as exc:                  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print(f"  ⚠ Part D Provider download failed: {exc}")
         return 1
 
@@ -126,7 +130,7 @@ def main() -> int:
     pd_drug = RAW_DIR / "part_d_provider_drug_2022.csv"
     try:
         download_file(PART_D_PROVIDER_DRUG_URL, pd_drug)
-    except Exception as exc:                  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print(f"  ⚠ Part D Provider-Drug download failed: {exc}")
         return 1
 

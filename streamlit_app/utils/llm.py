@@ -46,7 +46,7 @@ Hard rules:
 def _get_groq_client():
     """Lazy Groq client. Returns None if no key configured."""
     try:
-        from groq import Groq                     # noqa: PLC0415
+        from groq import Groq  # noqa: PLC0415
     except ImportError:
         return None
 
@@ -137,7 +137,7 @@ Business question it answers:
             max_tokens=500,
         )
         return response.choices[0].message.content
-    except Exception as exc:                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return f"⚠️ LLM call failed: `{exc}`"
 
 

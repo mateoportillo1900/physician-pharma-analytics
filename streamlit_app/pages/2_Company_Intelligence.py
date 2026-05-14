@@ -49,8 +49,9 @@ companies["label"] = (
     companies["company_name"] + " ($" + companies["total_m"].astype(str) + "M)"
 )
 
-selected_label = st.selectbox("Company", companies["label"].tolist(),
-                              label_visibility="collapsed")
+selected_label = st.selectbox(
+    "Company", companies["label"].tolist(), label_visibility="collapsed"
+)
 selected_company = companies.loc[
     companies["label"] == selected_label, "company_name"
 ].iloc[0]
@@ -101,7 +102,8 @@ with col1:
     )
     fig = bar_chart(
         spec_df.sort_values("spend_k"),
-        x="spend_k", y="specialty",
+        x="spend_k",
+        y="specialty",
         title="Top 10 Specialties by Spend ($K)",
         orientation="h",
     )
@@ -133,7 +135,9 @@ with col2:
         params=(selected_company,),
     )
     fig = donut_chart(
-        cat_df, names="payment_category", values="spend_k",
+        cat_df,
+        names="payment_category",
+        values="spend_k",
         title="Payment Type Mix",
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -170,7 +174,9 @@ geo_df = run_query(
 )
 
 fig = choropleth_us(
-    geo_df, state_col="state", value_col="spend_k",
+    geo_df,
+    state_col="state",
+    value_col="spend_k",
     title="2022 Spend by State ($K)",
 )
 st.plotly_chart(fig, use_container_width=True)
@@ -213,8 +219,14 @@ display_top["total_paid"] = display_top["total_paid"].apply(lambda x: f"${x:,.0f
 display_top["largest_single"] = display_top["largest_single"].apply(
     lambda x: f"${x:,.0f}"
 )
-display_top.columns = ["Physician", "Specialty", "State", "Total Paid",
-                       "# Payments", "Largest Single"]
+display_top.columns = [
+    "Physician",
+    "Specialty",
+    "State",
+    "Total Paid",
+    "# Payments",
+    "Largest Single",
+]
 st.dataframe(display_top, use_container_width=True, hide_index=True, height=400)
 
 render_explain_button(

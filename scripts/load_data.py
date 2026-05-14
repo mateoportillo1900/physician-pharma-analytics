@@ -57,6 +57,7 @@ CHUNKSIZE = 200_000
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def ensure_raw_schema(conn: psycopg.Connection) -> None:
     """Create the `raw` schema if it doesn't exist."""
     with conn.cursor() as cur:
@@ -64,21 +65,19 @@ def ensure_raw_schema(conn: psycopg.Connection) -> None:
     conn.commit()
 
 
-def drop_and_create_table(
-    conn: psycopg.Connection, table: str, ddl: str
-) -> None:
+def drop_and_create_table(conn: psycopg.Connection, table: str, ddl: str) -> None:
     """Drop and recreate a raw table from a DDL string."""
     with conn.cursor() as cur:
-        cur.execute(sql.SQL("DROP TABLE IF EXISTS raw.{} CASCADE;").format(
-            sql.Identifier(table)
-        ))
+        cur.execute(
+            sql.SQL("DROP TABLE IF EXISTS raw.{} CASCADE;").format(
+                sql.Identifier(table)
+            )
+        )
         cur.execute(ddl)
     conn.commit()
 
 
-def copy_dataframe(
-    conn: psycopg.Connection, table: str, df: pd.DataFrame
-) -> None:
+def copy_dataframe(conn: psycopg.Connection, table: str, df: pd.DataFrame) -> None:
     """Bulk-load a DataFrame into raw.<table> using COPY.
 
     Uses Postgres COPY in default TEXT format (tab-separated). psycopg's
@@ -90,9 +89,7 @@ def copy_dataframe(
         return
 
     columns = list(df.columns)
-    copy_sql = sql.SQL(
-        "COPY raw.{table} ({cols}) FROM STDIN"
-    ).format(
+    copy_sql = sql.SQL("COPY raw.{table} ({cols}) FROM STDIN").format(
         table=sql.Identifier(table),
         cols=sql.SQL(", ").join(map(sql.Identifier, columns)),
     )
@@ -101,10 +98,7 @@ def copy_dataframe(
         for _, row in df.iterrows():
             # Replace any pandas NA / NaN / NaT with native None,
             # which psycopg serializes as Postgres NULL via \N
-            row_vals = [
-                None if pd.isna(v) else v
-                for v in row.tolist()
-            ]
+            row_vals = [None if pd.isna(v) else v for v in row.tolist()]
             copy.write_row(row_vals)
     conn.commit()
 
@@ -112,6 +106,7 @@ def copy_dataframe(
 # ─────────────────────────────────────────────────────────────────────────────
 # Loaders
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def load_open_payments(conn: psycopg.Connection) -> int:
     """Load filtered Open Payments General into raw.open_payments."""
@@ -193,8 +188,9 @@ def load_open_payments(conn: psycopg.Connection) -> int:
         chunk["payment_date"] = pd.to_datetime(
             chunk["payment_date"], errors="coerce"
         ).dt.date
-        chunk = chunk.dropna(subset=["physician_npi", "company_name",
-                                     "payment_amount_usd"])
+        chunk = chunk.dropna(
+            subset=["physician_npi", "company_name", "payment_amount_usd"]
+        )
 
         # Drop payments under MIN_PAYMENT_USD — cuts most $5-$20 meal noise
         # while keeping all meaningful commercial-engagement payments
@@ -366,8 +362,9 @@ def load_part_d_by_drug(conn: psycopg.Connection) -> int:
         chunk["total_drug_cost_usd"] = pd.to_numeric(
             chunk["total_drug_cost_usd"], errors="coerce"
         )
-        chunk = chunk.dropna(subset=["physician_npi", "drug_brand_name",
-                                     "total_claim_count"])
+        chunk = chunk.dropna(
+            subset=["physician_npi", "drug_brand_name", "total_claim_count"]
+        )
 
         copy_dataframe(conn, "part_d_by_drug", chunk)
         total_loaded += len(chunk)
@@ -381,8 +378,9 @@ def load_part_d_by_drug(conn: psycopg.Connection) -> int:
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def main() -> int:
-    import argparse                                # noqa: PLC0415
+    import argparse  # noqa: PLC0415
 
     parser = argparse.ArgumentParser(description="Load CMS data into Neon")
     parser.add_argument(

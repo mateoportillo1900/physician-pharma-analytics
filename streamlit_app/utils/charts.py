@@ -11,8 +11,16 @@ import plotly.graph_objects as go
 
 # Reusable color palette — colorblind-safe, professional
 PALETTE = [
-    "#0066CC", "#FF6B35", "#16A085", "#9B59B6", "#F39C12",
-    "#E74C3C", "#1ABC9C", "#34495E", "#D35400", "#27AE60",
+    "#0066CC",
+    "#FF6B35",
+    "#16A085",
+    "#9B59B6",
+    "#F39C12",
+    "#E74C3C",
+    "#1ABC9C",
+    "#34495E",
+    "#D35400",
+    "#27AE60",
 ]
 
 
@@ -33,33 +41,59 @@ def style_figure(fig: go.Figure, height: int = 420) -> go.Figure:
 
 
 def bar_chart(
-    df: pd.DataFrame, x: str, y: str, title: str,
-    orientation: str = "v", color: str | None = None
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    orientation: str = "v",
+    color: str | None = None,
 ) -> go.Figure:
     """Standard bar chart with the project's styling."""
     fig = px.bar(
-        df, x=x, y=y, title=title, orientation=orientation,
-        color=color, color_discrete_sequence=PALETTE,
+        df,
+        x=x,
+        y=y,
+        title=title,
+        orientation=orientation,
+        color=color,
+        color_discrete_sequence=PALETTE,
     )
     return style_figure(fig)
 
 
 def scatter_chart(
-    df: pd.DataFrame, x: str, y: str, title: str,
-    color: str | None = None, hover_data: list[str] | None = None,
-    size: str | None = None, log_x: bool = False, log_y: bool = False,
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    color: str | None = None,
+    hover_data: list[str] | None = None,
+    size: str | None = None,
+    log_x: bool = False,
+    log_y: bool = False,
 ) -> go.Figure:
     """Standard scatter chart."""
     fig = px.scatter(
-        df, x=x, y=y, title=title, color=color, size=size,
-        hover_data=hover_data, color_discrete_sequence=PALETTE,
-        log_x=log_x, log_y=log_y, opacity=0.6,
+        df,
+        x=x,
+        y=y,
+        title=title,
+        color=color,
+        size=size,
+        hover_data=hover_data,
+        color_discrete_sequence=PALETTE,
+        log_x=log_x,
+        log_y=log_y,
+        opacity=0.6,
     )
     return style_figure(fig)
 
 
 def choropleth_us(
-    df: pd.DataFrame, state_col: str, value_col: str, title: str,
+    df: pd.DataFrame,
+    state_col: str,
+    value_col: str,
+    title: str,
     color_scale: str = "Blues",
 ) -> go.Figure:
     """US state-level choropleth."""
@@ -76,7 +110,10 @@ def choropleth_us(
 
 
 def donut_chart(
-    df: pd.DataFrame, names: str, values: str, title: str,
+    df: pd.DataFrame,
+    names: str,
+    values: str,
+    title: str,
     label_threshold_pct: float = 5.0,
 ) -> go.Figure:
     """Donut chart for proportional breakdowns.
@@ -85,7 +122,7 @@ def donut_chart(
     overlap. Smaller slices show on hover and in the legend.
     """
     total = df[values].sum()
-    pct = (df[values] / total * 100)
+    pct = df[values] / total * 100
 
     # Build per-slice text: only show label for big slices
     text = [
@@ -94,7 +131,11 @@ def donut_chart(
     ]
 
     fig = px.pie(
-        df, names=names, values=values, title=title, hole=0.55,
+        df,
+        names=names,
+        values=values,
+        title=title,
+        hole=0.55,
         color_discrete_sequence=PALETTE,
     )
     fig.update_traces(

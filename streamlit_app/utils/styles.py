@@ -21,11 +21,11 @@ APP_NAME = "Pharma Analytics"
 
 # ── Color palette ────────────────────────────────────────────────────────────
 COLORS = {
-    "primary": "#1E3A8A",       # deep navy
-    "primary_light": "#3B82F6", # bright blue
-    "accent": "#F59E0B",        # amber
-    "success": "#10B981",       # emerald
-    "danger": "#EF4444",        # red
+    "primary": "#1E3A8A",  # deep navy
+    "primary_light": "#3B82F6",  # bright blue
+    "accent": "#F59E0B",  # amber
+    "success": "#10B981",  # emerald
+    "danger": "#EF4444",  # red
     "neutral_900": "#0F172A",
     "neutral_700": "#334155",
     "neutral_500": "#64748B",
@@ -335,9 +335,9 @@ def render_page_cards(cards: list[dict]) -> None:
     for card in cards:
         cards_html.append(f"""
             <div class="page-card">
-                <div class="page-card-tag">{card['tag']}</div>
-                <div class="page-card-title">{card['title']}</div>
-                <div class="page-card-desc">{card['description']}</div>
+                <div class="page-card-tag">{card["tag"]}</div>
+                <div class="page-card-title">{card["title"]}</div>
+                <div class="page-card-desc">{card["description"]}</div>
             </div>
         """)
     cards_html.append("</div>")
