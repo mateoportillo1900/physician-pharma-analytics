@@ -257,11 +257,23 @@ def section_heading(label: str) -> None:
     )
 
 
+def _md_bold_to_html(text: str) -> str:
+    """Convert `**bold**` markdown to `<strong>` HTML.
+
+    Needed because when we wrap text in an HTML <div> and pass it to
+    st.markdown, Streamlit treats the contents as HTML and skips its
+    markdown processor — so `**bold**` would render as literal asterisks.
+    """
+    import re                                       # noqa: PLC0415
+
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+
+
 def hero(title: str, subtitle: str, meta: str | None = None) -> None:
     """Render the consistent hero section at the top of each page."""
     st.markdown(f"# {title}")
     st.markdown(
-        f'<div class="app-hero-sub">{subtitle}</div>',
+        f'<div class="app-hero-sub">{_md_bold_to_html(subtitle)}</div>',
         unsafe_allow_html=True,
     )
     if meta:
@@ -328,17 +340,22 @@ def render_page_cards(cards: list[dict]) -> None:
     """Render a 2-column grid of page-purpose cards on the landing page.
 
     Each card dict: {tag, title, description}
+
+    NB: Streamlit's markdown processor interprets lines indented 4+ spaces
+    as code blocks, so the HTML must be left-aligned (no leading whitespace
+    per line) for `unsafe_allow_html` to actually render it as HTML and
+    not display the raw <div> tags.
     """
     st.markdown(PAGE_CARD_CSS, unsafe_allow_html=True)
 
-    cards_html = ['<div class="page-card-row">']
+    parts = ['<div class="page-card-row">']
     for card in cards:
-        cards_html.append(f"""
-            <div class="page-card">
-                <div class="page-card-tag">{card["tag"]}</div>
-                <div class="page-card-title">{card["title"]}</div>
-                <div class="page-card-desc">{card["description"]}</div>
-            </div>
-        """)
-    cards_html.append("</div>")
-    st.markdown("\n".join(cards_html), unsafe_allow_html=True)
+        parts.append(
+            '<div class="page-card">'
+            f'<div class="page-card-tag">{card["tag"]}</div>'
+            f'<div class="page-card-title">{card["title"]}</div>'
+            f'<div class="page-card-desc">{card["description"]}</div>'
+            "</div>"
+        )
+    parts.append("</div>")
+    st.markdown("".join(parts), unsafe_allow_html=True)
