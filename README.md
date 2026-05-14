@@ -15,11 +15,11 @@ on every visualization.
 
 ## 📊 Live Demo
 
-→ **[Open the deployed Streamlit app](https://your-app-url.streamlit.app)**
-(update once deployed)
+→ **[Open the deployed Streamlit app](https://mateoportillo1900-physician-pharma-anal-streamlit-appapp-ewprks.streamlit.app/)**
 
-→ **[dbt docs site](https://your-username.github.io/physician-pharma-analytics)**
-(update once deployed to GitHub Pages)
+Six views: Executive Dashboard, KOL Finder, Company Intelligence,
+Payment vs. Prescribing, Market Opportunity Map, and About this project.
+Every chart has an LLM-powered "Explain This Chart" button.
 
 ---
 
