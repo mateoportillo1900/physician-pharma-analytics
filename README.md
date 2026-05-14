@@ -21,6 +21,20 @@ Six views: Executive Dashboard, KOL Finder, Company Intelligence,
 Payment vs. Prescribing, Market Opportunity Map, and About this project.
 Every chart has an LLM-powered "Explain This Chart" button.
 
+## 📐 Visual Documentation
+
+How everything fits together, with Mermaid diagrams (rendered inline on
+GitHub):
+
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — System
+  architecture, data pipeline, dbt model lineage, user-interaction
+  sequence, and LLM "Explain This Chart" flow.
+- **[docs/DATA_MODEL.md](./docs/DATA_MODEL.md)** — Star-schema ER
+  diagram, table reference, the headline analytical join, data
+  quality, and privacy design.
+- **[METHODOLOGY.md](./METHODOLOGY.md)** — Analytical decisions,
+  statistical formulas, limitations, the BMS reporting quirk.
+
 ---
 
 ## The Business Question

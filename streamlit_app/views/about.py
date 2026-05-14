@@ -111,6 +111,33 @@ source repo.
 )
 
 
+# ─── Visual documentation ──────────────────────────────────────────────────
+section_heading("Visual documentation")
+
+st.markdown(
+    f"""
+For a deeper look at how the system works, the repo ships with
+**Mermaid-diagram-driven docs** that render directly on GitHub:
+
+- [**docs/ARCHITECTURE.md**]({GITHUB_URL}/blob/main/docs/ARCHITECTURE.md) —
+  The five-layer system architecture, data pipeline (CSV → mart), dbt
+  model lineage for all 12 models, user-interaction sequence diagram,
+  and the LLM "Explain this chart" flow.
+- [**docs/DATA_MODEL.md**]({GITHUB_URL}/blob/main/docs/DATA_MODEL.md) —
+  Star-schema ER diagram, table-by-table reference, the headline
+  analytical join (paid × prescribed × neither), data-quality
+  enforcement, and privacy-by-design rationale.
+- [**METHODOLOGY.md**]({GITHUB_URL}/blob/main/METHODOLOGY.md) —
+  Analytical decisions, statistical formulas (lift ratio, HHI,
+  investment ratio), the BMS reporting quirk, and what we can and
+  cannot conclude from observational data.
+
+You can also run `dbt docs generate && dbt docs serve` locally to get
+the **interactive lineage explorer** for every model.
+"""
+)
+
+
 # ─── Source ─────────────────────────────────────────────────────────────────
 section_heading("Source")
 
